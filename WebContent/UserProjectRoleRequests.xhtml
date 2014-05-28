@@ -1,0 +1,257 @@
+<!--
+Copyright 2013 Imperial College London
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.org/schema/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/home_template.xhtml">
+
+<ui:define name="body">
+
+    <rich:panel>
+        <f:facet name="header">Project Role Request details</f:facet>
+
+        <s:decorate id="userId" template="layout/display.xhtml">
+            <ui:define name="label">User</ui:define>
+            <h:outputText value="#{userProjectRoleRequestsHome.instance.users.loginName}"/>
+        </s:decorate>
+        <s:decorate id="projectId" template="layout/display.xhtml">
+            <ui:define name="label">Project</ui:define>
+            <h:outputText value="#{userProjectRoleRequestsHome.instance.projects.shortName}"/>
+        </s:decorate>
+        <s:decorate id="roleId" template="layout/display.xhtml">
+            <ui:define name="label">Role</ui:define>
+            <h:outputText value="#{userProjectRoleRequestsHome.instance.roles.name}"/>
+        </s:decorate>
+
+        <s:decorate id="rcTimestamp" template="layout/display.xhtml">
+            <ui:define name="label">Date Request Made</ui:define>
+            <h:outputText value="#{userProjectRoleRequestsHome.instance.rcTimestamp}">
+                <f:convertDateTime type="both" dateStyle="short"/>
+            </h:outputText>
+        </s:decorate>
+
+        <div style="clear:both"/>
+
+    </rich:panel>
+
+    <div class="actionButtons">
+
+        <s:button view="/UserProjectRoleRequestsEdit.xhtml"
+                    id="edit"
+                 value="Edit"
+              disabled="#{userProjectRoleRequestsHome.instance.id.userId != identity.id}"/>
+
+        <s:button view="/#{empty userProjectRoleRequestsFrom ? 'UserProjectRoleRequestsList' : userProjectRoleRequestsFrom}.xhtml"
+                    id="done"
+                 value="Done"
+                action="#{bijectionUtility.clearInstances('userProjectRoleRequestsHome')}"/>
+
+    </div>
+
+    <rich:tabPanel switchType="client">
+
+    <rich:tab>
+        <f:facet name="header">
+            <h:panelGroup><h:graphicImage value="/img/manytoone.gif" style="vertical-align: middle; padding-right: 4px;"/>User</h:panelGroup>
+        </f:facet>
+    <div class="association" id="usersParent">
+
+        <h:outputText value="There is no users associated with this userProjectRoleRequests."
+                   rendered="#{userProjectRoleRequestsHome.instance.users == null}"/>
+
+        <rich:dataTable var="_users"
+                   value="#{userProjectRoleRequestsHome.instance.users}"
+                rendered="#{userProjectRoleRequestsHome.instance.users != null}"
+              rowClasses="rvgRowOne,rvgRowTwo"
+                      id="usersTable">
+            <h:column rendered="#{identity.hasRole(roleIDs.SUPER_ADMIN_id)}">
+                <f:facet name="header">Id</f:facet>
+                <h:outputText value="#{_users.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">First name</f:facet>
+                <h:outputText value="#{_users.firstName}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Last name</f:facet>
+                <h:outputText value="#{_users.lastName}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Registration date</f:facet>
+                <h:outputText value="#{_users.registrationDate}">
+                    <f:convertDateTime type="date" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Active</f:facet>
+                <h:outputText value="#{_users.active}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Login name</f:facet>
+                <h:outputText value="#{_users.loginName}"/>
+            </h:column>
+            <h:column rendered="false">
+                <f:facet name="header">Password</f:facet>
+                <h:outputText value="#{_users.password}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Email</f:facet>
+                <h:outputText value="#{_users.email}"/>
+            </h:column>
+            <h:column styleClass="action">
+                <f:facet name="header">Action</f:facet>
+                <s:link id="viewusers"
+                     value="View"
+                      view="/Users.xhtml">
+                    <f:param name="usersId"
+                           value="#{_users.id}"/>
+                </s:link>
+            </h:column>
+        </rich:dataTable>
+
+    </div>
+    </rich:tab>
+
+    <rich:tab>
+        <f:facet name="header">
+            <h:panelGroup><h:graphicImage value="/img/manytoone.gif" style="vertical-align: middle; padding-right: 4px;"/>Project</h:panelGroup>
+        </f:facet>
+    <div class="association" id="projectsParent">
+
+        <h:outputText value="There is no projects associated with this userProjectRoleRequests."
+                   rendered="#{userProjectRoleRequestsHome.instance.projects == null}"/>
+
+        <rich:dataTable var="_projects"
+                   value="#{userProjectRoleRequestsHome.instance.projects}"
+                rendered="#{userProjectRoleRequestsHome.instance.projects != null}"
+              rowClasses="rvgRowOne,rvgRowTwo"
+                      id="projectsTable">
+            <h:column rendered="#{identity.hasRole(roleIDs.SUPER_ADMIN_id)}">
+                <f:facet name="header">Id</f:facet>
+                <h:outputText value="#{_projects.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Identifier</f:facet>
+                <h:outputText value="#{_projects.name}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Start date</f:facet>
+                <h:outputText value="#{_projects.startDate}">
+                    <f:convertDateTime type="date" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Implementation start date</f:facet>
+                <h:outputText value="#{_projects.implementationStartDate}">
+                    <f:convertDateTime type="date" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">End date</f:facet>
+                <h:outputText value="#{_projects.endDate}">
+                    <f:convertDateTime type="date" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Label</f:facet>
+                <h:outputText value="#{_projects.shortName}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Description</f:facet>
+                <h:outputText value="#{_projects.description}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Host organization</f:facet>
+                <h:outputText value="#{_projects.hostOrganization}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Site structure</f:facet>
+                <h:outputText value="#{_projects.siteStructure}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Type</f:facet>
+                <h:outputText value="#{_projects.type}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Active</f:facet>
+                <h:outputText value="#{_projects.active}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Grouping</f:facet>
+                <h:outputText value="#{_projects.projectGroupings.name}"/>
+            </h:column>
+            <h:column styleClass="action">
+                <f:facet name="header">Action</f:facet>
+                <s:link id="viewprojects"
+                     value="View"
+                      view="/Projects.xhtml">
+                    <f:param name="projectsId"
+                           value="#{_projects.id}"/>
+                </s:link>
+            </h:column>
+        </rich:dataTable>
+
+    </div>
+    </rich:tab>
+
+    <rich:tab>
+        <f:facet name="header">
+            <h:panelGroup><h:graphicImage value="/img/manytoone.gif" style="vertical-align: middle; padding-right: 4px;"/>Role</h:panelGroup>
+        </f:facet>
+    <div class="association" id="rolesParent">
+
+        <h:outputText value="There is no roles associated with this userProjectRoleRequests."
+                   rendered="#{userProjectRoleRequestsHome.instance.roles == null}"/>
+
+        <rich:dataTable var="_roles"
+                   value="#{userProjectRoleRequestsHome.instance.roles}"
+                rendered="#{userProjectRoleRequestsHome.instance.roles != null}"
+              rowClasses="rvgRowOne,rvgRowTwo"
+                      id="rolesTable">
+            <h:column rendered="#{identity.hasRole(roleIDs.SUPER_ADMIN_id)}">
+                <f:facet name="header">Id</f:facet>
+                <h:outputText value="#{_roles.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Name</f:facet>
+                <h:outputText value="#{_roles.name}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Description</f:facet>
+                <h:outputText value="#{_roles.description}"/>
+            </h:column>
+            <h:column styleClass="action">
+                <f:facet name="header">Action</f:facet>
+                <s:link id="viewroles"
+                     value="View"
+                      view="/Roles.xhtml">
+                    <f:param name="rolesId"
+                           value="#{_roles.id}"/>
+                </s:link>
+            </h:column>
+        </rich:dataTable>
+
+    </div>
+    </rich:tab>
+</rich:tabPanel>
+</ui:define>
+
+</ui:composition>

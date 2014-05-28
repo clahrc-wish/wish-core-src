@@ -1,0 +1,155 @@
+<!--
+Copyright 2013 Imperial College London
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.org/schema/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/home_template.xhtml">
+
+    <ui:define name="body">
+    
+        <span style="font-weight:bold; font-family:Arial,Verdana,sans-serif;">Welcome to #{installationName}</span>
+        <span style="padding-left:10px; padding-right:5px; font-family:Arial,Verdana,sans-serif;">You last logged in on:</span>
+        <span style="font-family:Arial,Verdana,sans-serif;">
+            <h:outputText value="#{identityHome.lastLogin}">
+                <f:convertDateTime type="both" dateStyle="full"/>
+            </h:outputText>
+        </span>
+        <br />
+        <h:panelGrid columns="3" style="width:100%; height:455px; border:solid" columnClasses="colStyle1,colStyle2,colStyle3">
+
+			<h:panelGrid style="width:100%; height:435px;">
+                <rich:panel style="width:100%; height:305px;">
+                    <f:facet name="header">Project Access</f:facet>
+                    <h:form id="activeProjectForm" styleClass="edit">
+                        <h:outputText value="Please select a project you’d like to work in from the list below and press the open project button:" />
+                        <rich:tree style="width:179px; height:155px; border-style:solid; border-width:thin; border-color:lightgrey; overflow: auto;"
+                                   toggleType="client" selectionType="ajax" render="openProject"
+                                   value="#{projectsTree.groups}" var="projectNode" 
+                                   selectionChangeListener="#{projectsTree.nodeSelected}">
+                        	<rich:treeNode>
+                        		<h:outputText value="#{projectNode.toString()}"/>
+                        	</rich:treeNode>
+                        </rich:tree>
+                        <div class="actionButtons">
+                            <h:commandButton id="openProject" value="Open Project" immediate="true"
+                            				 disabled="#{empty identityHome.project}"
+                                             action="#{activeProjectHome.wire(identityHome.project.id)}"/>
+                        </div>
+                    </h:form>
+                </rich:panel>
+
+                <rich:panel style="width:100%; height:120px; overflow: auto;">
+                </rich:panel>
+                   
+            </h:panelGrid>
+               
+
+            <rich:panel style="width:100%; height:435px; overflow: auto;">
+                <f:facet name="header">News feed / alerts</f:facet>
+                <h:form>
+                    <h:outputText value="There are no messages for your project(s)."
+                                  rendered="#{empty userMessagesList.resultList}"/>
+
+                    <h:dataTable value="#{userMessagesList.resultList}"
+                                   var="_userMessages"
+                              rendered="#{not empty userMessagesList.resultList}"
+                            rowClasses="rvgRowOne,rvgRowTwo"
+                                    id="userMessagesesTable"
+                                  rows="6"
+                                 style="width:100%;">
+                        <rich:column sortBy="#{_userMessages.id.rcTimestamp}">
+                            <f:facet name="header">Time</f:facet>
+                            <h:outputText value="#{_userMessages.id.rcTimestamp}">
+                                <f:convertDateTime type="both" dateStyle="short" timeStyle="short"/>
+                            </h:outputText>
+                        </rich:column>
+                        <rich:column sortBy="#{_userMessages.users.loginName}">
+                            <f:facet name="header">Sender</f:facet>
+                            <h:outputText value="#{_userMessages.users.loginName}"/>
+                        </rich:column>
+                        <rich:column sortBy="#{_userMessages.projects.shortName}">
+                            <f:facet name="header">Recipient</f:facet>
+                            <h:outputText value="#{_userMessages.projects.shortName}"/>
+                        </rich:column>
+                        <rich:column>
+                            <f:facet name="header">Message</f:facet>
+                            <rich:collapsiblePanel switchType="client" expanded="false">
+                                <f:facet name="headerCollapsed">show message</f:facet>
+							    <f:facet name="headerExpanded">hide message</f:facet>
+ 						        <h:outputText styleClass="msgText" value="#{_userMessages.message}"/>
+								<br />
+								<h:commandButton id="promote" value="Promote to Comment" action="#{userMessagesHome.promoteToComment(_userMessages)}" 
+								                 rendered="#{(empty _userMessages.comment) and identity.hasPermission(_userMessages.id.projectId, roleIDs.PROJECT_ADMIN_id,'')}"/>
+								<h:commandButton id="delete" value="Delete" action="#{userMessagesHome.delete(_userMessages)}" 
+								                 rendered="#{(identity.id == _userMessages.id.userId) or identity.hasPermission(_userMessages.id.projectId, roleIDs.PROJECT_ADMIN_id,'')}"/>
+                            </rich:collapsiblePanel>
+                        </rich:column>
+                    </h:dataTable>
+                    <rich:dataScroller for="userMessagesesTable" renderIfSinglePage="false"></rich:dataScroller>
+                </h:form>
+                       
+            </rich:panel>
+
+            
+   
+            <rich:panel style="width:100%; height:435px;">
+                <f:facet name="header">Post a message to your projects</f:facet>
+                <h:form id="msgForm" styleClass="edit">
+                    <h:outputText value="Messages can be sent to all users in a team or teams.  Users in selected teams will see the message on the welcome screen next time they log in." />
+                    <br />
+                    <h:outputText value="Select project(s):" />
+                    <h:selectManyListbox id="selectedProjects" style="width:100%; height:85px; font-size:11px;"
+                                         required="true" value="#{userMessagesHome.selectedProjects}">
+                        <f:selectItems value="#{projectsList.resultListAsSelectItems}"></f:selectItems>
+                        <s:convertEntity></s:convertEntity>
+                    </h:selectManyListbox>
+                    <br />
+                    <h:message id="selectedProjectsErrors" styleClass="message"
+                               errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg"
+                               errorStyle="color: red;" infoStyle="color: blue;" warnStyle="color: yellow;"
+                               for="msgForm:selectedProjects"/>
+                    
+                    <br />
+                    <h:outputText value="Enter text:" />
+                    <h:inputTextarea id="message" cols="25" rows="8" style="font-size:11px;"
+                                     required="true" value="#{userMessagesHome.instance.message}"/>
+                    <br />
+                    <h:message id="messageErrors" styleClass="message"
+                               errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg"
+                               errorStyle="color: red;" infoStyle="color: blue;" warnStyle="color: yellow;"
+                               for="msgForm:message"/>
+                    
+                    <div class="actionButtons">
+                        <h:commandButton id="save" value="Send"
+                                         action="#{userMessagesHome.persistPerProject}"/>
+                        <s:button id="reset" value="Clear" includePageParams="false"/>
+                    </div>
+                                        
+                </h:form>
+                                    
+            </rich:panel>
+
+                
+        </h:panelGrid>
+        
+    </ui:define>
+</ui:composition>

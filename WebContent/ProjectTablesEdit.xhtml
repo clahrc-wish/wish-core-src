@@ -1,0 +1,196 @@
+<!--
+Copyright 2013 Imperial College London
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.org/schema/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="projectTables" styleClass="edit">
+
+        <rich:panel>
+            <f:facet name="header">#{projectTablesHome.managed ? 'Edit' : 'Add'} Project tables</f:facet>
+
+
+            <s:decorate id="projectIdField" template="layout/edit.xhtml">
+                <ui:define name="label">Project id</ui:define>
+                <h:inputText id="projectId"
+                       required="true"
+                       disabled="#{projectTablesHome.managed}"
+                          value="#{projectTablesHome.instance.id.projectId}">
+                    <a:ajax event="blur" render="projectIdField" bypassUpdates="true"/>
+                </h:inputText>
+            </s:decorate>
+
+            <s:decorate id="tableNameField" template="layout/edit.xhtml">
+                <ui:define name="label">Table name</ui:define>
+                <h:inputText id="tableName"
+                       disabled="#{projectTablesHome.managed}"
+                      required="true"
+                          size="45"
+                     maxlength="45"
+                         value="#{projectTablesHome.instance.id.tableName}">
+                    <a:ajax event="blur" render="tableNameField" bypassUpdates="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="tableLabelField" template="layout/edit.xhtml">
+                <ui:define name="label">Table label</ui:define>
+                <h:inputText id="tableLabel"
+                       required="true"
+                           size="45"
+                      maxlength="45"
+                          value="#{projectTablesHome.instance.tableLabel}">
+                    <a:ajax event="blur" render="tableLabelField" bypassUpdates="true"/>
+                </h:inputText>
+            </s:decorate>
+            
+            
+            <div style="clear:both">
+                <span class="required">*</span>
+                required fields
+            </div>
+
+        </rich:panel>
+
+        <div class="actionButtons">
+
+            <h:commandButton id="save"
+                          value="Save"
+                         action="#{projectTablesHome.persist}"
+                       disabled="#{!projectTablesHome.wired}"
+                       rendered="#{!projectTablesHome.managed}">
+                <s:conversationId/>
+            </h:commandButton>
+
+            <h:commandButton id="update"
+                          value="Save"
+                         action="#{projectTablesHome.update}"
+                       rendered="#{projectTablesHome.managed}">
+                <s:conversationId/>
+            </h:commandButton>
+
+            <h:commandButton id="delete"
+                          value="Delete"
+                         action="#{projectTablesHome.remove}"
+                      immediate="true"
+                       rendered="#{projectTablesHome.managed}"/>
+
+            <s:button id="cancelEdit"
+                   value="Cancel"
+             propagation="end"
+                    view="/ProjectTables.xhtml"
+                rendered="#{projectTablesHome.managed}"/>
+
+            <s:button id="cancelAdd"
+                   value="Cancel"
+             propagation="end"
+                    view="/#{empty projectTablesFrom ? 'ProjectTablesList' : projectTablesFrom}.xhtml"
+                rendered="#{!projectTablesHome.managed}"/>
+
+        </div>
+    </h:form>
+
+<rich:tabPanel switchType="client">
+
+    <rich:tab header="Projects *" labelClass="required">
+    <div class="association" id="projectsParent">
+
+        <h:outputText value="There is no projects associated with this projectTables."
+                   rendered="#{projectTablesHome.instance.projects == null}"/>
+
+        <rich:dataTable var="_projects"
+                   value="#{projectTablesHome.instance.projects}"
+                rendered="#{projectTablesHome.instance.projects != null}"
+              rowClasses="rvgRowOne,rvgRowTwo"
+                      id="projectsTable">
+            <h:column>
+                <f:facet name="header">Id</f:facet>
+                <h:outputText value="#{_projects.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Identifier</f:facet>
+                <h:outputText value="#{_projects.name}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Start date</f:facet>
+                <h:outputText value="#{_projects.startDate}">
+                    <f:convertDateTime type="date" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Implementation start date</f:facet>
+                <h:outputText value="#{_projects.implementationStartDate}">
+                    <f:convertDateTime type="date" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">End date</f:facet>
+                <h:outputText value="#{_projects.endDate}">
+                    <f:convertDateTime type="date" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Label</f:facet>
+                <h:outputText value="#{_projects.shortName}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Description</f:facet>
+                <h:outputText value="#{_projects.description}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Host organization</f:facet>
+                <h:outputText value="#{_projects.hostOrganization}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Site structure</f:facet>
+                <h:outputText value="#{_projects.siteStructure}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Type</f:facet>
+                <h:outputText value="#{_projects.type}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Active</f:facet>
+                <h:outputText value="#{_projects.active}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Grouping</f:facet>
+                <h:outputText value="#{_projects.projectGroupings.name}"/>
+            </h:column>
+        </rich:dataTable>
+
+        <div class="actionButtons">
+            <s:button id="#{projectTablesHome.instance.projects != null ? 'changeParent' : 'selectParent'}" value="#{projectTablesHome.instance.projects != null ? 'Change' : 'Select'} projects"
+                       view="/ProjectsList.xhtml">
+                <f:param name="from" value="ProjectTablesEdit"/>
+            </s:button>
+        </div>
+
+    </div>
+    </rich:tab>
+</rich:tabPanel>
+</ui:define>
+
+</ui:composition>

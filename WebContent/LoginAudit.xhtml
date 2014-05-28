@@ -1,0 +1,148 @@
+<!--
+Copyright 2013 Imperial College London
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.org/schema/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/home_template.xhtml">
+
+<ui:define name="body">
+
+    <rich:panel>
+        <f:facet name="header">Login audit record details</f:facet>
+
+        <s:decorate id="userId" template="layout/display.xhtml">
+            <ui:define name="label">User id</ui:define>
+            <h:outputText value="#{loginAuditHome.instance.id.userId}"/>
+        </s:decorate>
+        <s:decorate id="sessionId" template="layout/display.xhtml">
+            <ui:define name="label">Session id</ui:define>
+            <h:outputText value="#{loginAuditHome.instance.id.sessionId}"/>
+        </s:decorate>
+        <s:decorate id="ipAddress" template="layout/display.xhtml">
+            <ui:define name="label">Ip address</ui:define>
+            <h:outputText value="#{loginAuditHome.instance.id.ipAddress}"/>
+        </s:decorate>
+        <s:decorate id="loggedInDateTime" template="layout/display.xhtml">
+            <ui:define name="label">Logged in date time</ui:define>
+            <h:outputText value="#{loginAuditHome.instance.id.loggedInDateTime}">
+                <f:convertDateTime type="both" dateStyle="short"/>
+            </h:outputText>
+        </s:decorate>
+
+        <s:decorate id="loggedOutDateTime" template="layout/display.xhtml">
+            <ui:define name="label">Logged out date time</ui:define>
+            <h:outputText value="#{loginAuditHome.instance.loggedOutDateTime}">
+                <f:convertDateTime type="both" dateStyle="short"/>
+            </h:outputText>
+        </s:decorate>
+
+        <s:decorate id="sessionExpiredDateTime" template="layout/display.xhtml">
+            <ui:define name="label">Session expired date time</ui:define>
+            <h:outputText value="#{loginAuditHome.instance.sessionExpiredDateTime}">
+                <f:convertDateTime type="both" dateStyle="short"/>
+            </h:outputText>
+        </s:decorate>
+
+        <div style="clear:both"/>
+
+    </rich:panel>
+
+    <div class="actionButtons">
+
+        <s:button view="/LoginAuditEdit.xhtml"
+                    id="edit"
+                 value="Edit"
+                 disabled="#{not identity.hasRole(roleIDs.SUPER_ADMIN_id)}"/>
+
+        <s:button view="/#{empty loginAuditFrom ? 'LoginAuditList' : loginAuditFrom}.xhtml"
+                    id="done"
+                 value="Done"
+                action="#{bijectionUtility.clearInstances('loginAuditHome')}"/>
+
+    </div>
+
+    <rich:tabPanel switchType="ajax">
+
+    <rich:tab>
+        <f:facet name="header">
+            <h:panelGroup><h:graphicImage value="/img/manytoone.gif" style="vertical-align: middle; padding-right: 4px;"/>User</h:panelGroup>
+        </f:facet>
+    <div class="association" id="usersParent">
+
+        <h:outputText value="There is no user associated with this loginAudit."
+                   rendered="#{loginAuditHome.instance.users == null}"/>
+
+        <rich:dataTable var="_users"
+                   value="#{loginAuditHome.instance.users}"
+                rendered="#{loginAuditHome.instance.users != null}"
+              rowClasses="rvgRowOne,rvgRowTwo"
+                      id="usersTable">
+            <h:column rendered="#{identity.hasRole(roleIDs.SUPER_ADMIN_id)}">
+                <f:facet name="header">Id</f:facet>
+                <h:outputText value="#{_users.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">First name</f:facet>
+                <h:outputText value="#{_users.firstName}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Last name</f:facet>
+                <h:outputText value="#{_users.lastName}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Registration date</f:facet>
+                <h:outputText value="#{_users.registrationDate}">
+                    <f:convertDateTime type="date" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Active</f:facet>
+                <h:outputText value="#{_users.active}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Login name</f:facet>
+                <h:outputText value="#{_users.loginName}"/>
+            </h:column>
+            <h:column rendered="false">
+                <f:facet name="header">Password</f:facet>
+                <h:outputText value="#{_users.password}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Email</f:facet>
+                <h:outputText value="#{_users.email}"/>
+            </h:column>
+            <h:column styleClass="action">
+                <f:facet name="header">Action</f:facet>
+                <s:link id="viewusers"
+                     value="View"
+                      view="/Users.xhtml">
+                    <f:param name="usersId"
+                           value="#{_users.id}"/>
+                </s:link>
+            </h:column>
+        </rich:dataTable>
+
+    </div>
+    </rich:tab>
+</rich:tabPanel>
+</ui:define>
+
+</ui:composition>

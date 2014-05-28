@@ -1,0 +1,336 @@
+<!--
+Copyright 2013 Imperial College London
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.org/schema/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="sustainabilitySearch" styleClass="edit">
+
+        <rich:collapsiblePanel headerClass="collapsiblePanelHeader" switchType="ajax" expanded="false">
+			<f:facet name="headerCollapsed">Sustainability Search (click to expand)</f:facet>
+			<f:facet name="headerExpanded">Sustainability Search (click to collapse)</f:facet>
+
+            <s:decorate template="layout/display.xhtml">
+                <ui:define name="label">Comment</ui:define>
+                <h:inputText id="comment" value="#{sustainabilityList.sustainability.comment}"/>
+            </s:decorate>
+
+            <s:decorate template="layout/display.xhtml">
+                <ui:define name="label">Match</ui:define>
+                <h:selectOneRadio id="logic" value="#{sustainabilityList.restrictionLogicOperator}" styleClass="radio">
+                    <f:selectItem itemLabel="All" itemValue="and"/>
+                    <f:selectItem itemLabel="Any" itemValue="or" itemDisabled="#{not identity.hasRole(roleIDs.WRT_ADMIN_id)}"/>
+                </h:selectOneRadio>
+            </s:decorate>
+
+	        <br />
+			<div>
+	            <h:commandButton id="search" value="Search" action="/SustainabilityList.xhtml"/>
+	            <s:button id="reset" value="Reset" includePageParams="false"/>
+	        </div>
+
+        </rich:collapsiblePanel>
+
+    </h:form>
+
+	<s:div styleClass="actionButtons" rendered="#{empty from}">
+        <s:button view="/SustainabilityEdit.xhtml"
+                    id="createDuplicate"
+           propagation="none"
+                 value="Create Sustainability score">
+            <f:param name="sustainabilityId"/>
+            <f:param name="usersId" value="#{identity.id}"/>
+            <f:param name="projectsId" value="#{activeProjectHome.definedInstance.id}"/>
+        </s:button>
+    </s:div>
+    
+    <rich:panel>
+        <f:facet name="header">Sustainability Search Results (#{empty sustainabilityList.resultList ? 0 : (sustainabilityList.paginated ? sustainabilityList.resultCount : sustainabilityList.resultList.size)})</f:facet>
+    <div class="results" id="sustainabilityList">
+
+    <h:outputText value="The Sustainability record search returned no results."
+               rendered="#{empty sustainabilityList.resultList}"/>
+
+    <rich:dataTable id="sustainabilityList"
+                var="_sustainability"
+              value="#{sustainabilityList.resultList}"
+           rendered="#{not empty sustainabilityList.resultList}">
+        <rich:column styleClass="action">
+            <f:facet name="header">Action</f:facet>
+            <s:link view="/#{empty from ? 'Sustainability' : from}.xhtml"
+                   value="#{empty from ? 'View' : 'Select'}"
+             propagation="#{empty from ? 'none' : 'default'}"
+                      id="sustainabilityViewIdDuplicate">
+                <f:param name="sustainabilityId"
+                        value="#{_sustainability.id}"/>
+            </s:link>
+            #{' '}
+            <s:link view="/SustainabilityEdit.xhtml"
+                   value="Edit"
+             propagation="none"
+                      id="sustainabilityEditDuplicate"
+                rendered="#{empty from}"
+                disabled="#{_sustainability.id != identity.id and not identity.hasRole(roleIDs.WRT_ADMIN_id)}">
+                <f:param name="sustainabilityId"
+                        value="#{_sustainability.id}"/>
+            </s:link>
+        </rich:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{sustainabilityList}"/>
+                    <ui:param name="propertyLabel" value="Entry ID"/>
+                    <ui:param name="propertyPath" value="sustainability.id"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_sustainability.id}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{sustainabilityList}"/>
+                    <ui:param name="propertyLabel" value="User"/>
+                    <ui:param name="propertyPath" value="sustainability.users.loginName"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{(identity.id == _sustainability.users.id) or identity.hasRole(roleIDs.WRT_ADMIN_id) ? _sustainability.users.loginName : '*****'}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{sustainabilityList}"/>
+                    <ui:param name="propertyLabel" value="Project"/>
+                    <ui:param name="propertyPath" value="sustainability.projects.shortName"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_sustainability.projects.shortName}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{sustainabilityList}"/>
+                    <ui:param name="propertyLabel" value="CLD event"/>
+                    <ui:param name="propertyPath" value="sustainability.eventDate"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_sustainability.eventDate}">
+                <f:convertDateTime type="date" dateStyle="short"/>
+            </h:outputText>
+        </h:column>
+        <h:column rendered="#{identity.hasRole(roleIDs.SUPER_ADMIN_id)}">
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{sustainabilityList}"/>
+                    <ui:param name="propertyLabel" value="Benefits"/>
+                    <ui:param name="propertyPath" value="sustainability.score1Val()"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_sustainability.score1Val()}"/>
+        </h:column>
+        <h:column rendered="#{identity.hasRole(roleIDs.SUPER_ADMIN_id)}">
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{sustainabilityList}"/>
+                    <ui:param name="propertyLabel" value="Credibility"/>
+                    <ui:param name="propertyPath" value="sustainability.score2Val()"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_sustainability.score2Val()}"/>
+        </h:column>
+        <h:column rendered="#{identity.hasRole(roleIDs.SUPER_ADMIN_id)}">
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{sustainabilityList}"/>
+                    <ui:param name="propertyLabel" value="Adaptability"/>
+                    <ui:param name="propertyPath" value="sustainability.score3Val()"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_sustainability.score3Val()}"/>
+        </h:column>
+        <h:column rendered="#{identity.hasRole(roleIDs.SUPER_ADMIN_id)}">
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{sustainabilityList}"/>
+                    <ui:param name="propertyLabel" value="Effectiveness"/>
+                    <ui:param name="propertyPath" value="sustainability.score4Val()"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_sustainability.score4Val()}"/>
+        </h:column>
+        <h:column rendered="#{identity.hasRole(roleIDs.SUPER_ADMIN_id)}">
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{sustainabilityList}"/>
+                    <ui:param name="propertyLabel" value="Staff involvement"/>
+                    <ui:param name="propertyPath" value="sustainability.score5Val()"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_sustainability.score5Val()}"/>
+        </h:column>
+        <h:column rendered="#{identity.hasRole(roleIDs.SUPER_ADMIN_id)}">
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{sustainabilityList}"/>
+                    <ui:param name="propertyLabel" value="Staff behaviours"/>
+                    <ui:param name="propertyPath" value="sustainability.score6Val()"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_sustainability.score6Val()}"/>
+        </h:column>
+        <h:column rendered="#{identity.hasRole(roleIDs.SUPER_ADMIN_id)}">
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{sustainabilityList}"/>
+                    <ui:param name="propertyLabel" value="Senior leadership"/>
+                    <ui:param name="propertyPath" value="sustainability.score7Val()"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_sustainability.score7Val()}"/>
+        </h:column>
+        <h:column rendered="#{identity.hasRole(roleIDs.SUPER_ADMIN_id)}">
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{sustainabilityList}"/>
+                    <ui:param name="propertyLabel" value="Clinical leadership"/>
+                    <ui:param name="propertyPath" value="sustainability.score8Val()"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_sustainability.score8Val()}"/>
+        </h:column>
+        <h:column rendered="#{identity.hasRole(roleIDs.SUPER_ADMIN_id)}">
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{sustainabilityList}"/>
+                    <ui:param name="propertyLabel" value="Fit with organisation aims/culture"/>
+                    <ui:param name="propertyPath" value="sustainability.score9Val()"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_sustainability.score9Val()}"/>
+        </h:column>
+        <h:column rendered="#{identity.hasRole(roleIDs.SUPER_ADMIN_id)}">
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{sustainabilityList}"/>
+                    <ui:param name="propertyLabel" value="Infrastructure"/>
+                    <ui:param name="propertyPath" value="sustainability.score10Val()"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_sustainability.score10Val()}"/>
+        </h:column>
+        <h:column rendered="#{identity.hasRole(roleIDs.SUPER_ADMIN_id)}">
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{sustainabilityList}"/>
+                    <ui:param name="propertyLabel" value="Comment"/>
+                    <ui:param name="propertyPath" value="sustainability.comment"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_sustainability.comment}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{sustainabilityList}"/>
+                    <ui:param name="propertyLabel" value="Date Entry Made"/>
+                    <ui:param name="propertyPath" value="sustainability.rcTimestamp"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_sustainability.rcTimestamp}">
+                <f:convertDateTime type="both" dateStyle="short"/>
+            </h:outputText>
+        </h:column>
+        <rich:column styleClass="action" rendered="#{identity.hasRole(roleIDs.SUPER_ADMIN_id)}">
+            <f:facet name="header">Action</f:facet>
+            <s:link view="/#{empty from ? 'Sustainability' : from}.xhtml"
+                   value="#{empty from ? 'View' : 'Select'}"
+             propagation="#{empty from ? 'none' : 'default'}"
+                      id="sustainabilityViewId">
+                <f:param name="sustainabilityId"
+                        value="#{_sustainability.id}"/>
+            </s:link>
+            #{' '}
+            <s:link view="/SustainabilityEdit.xhtml"
+                   value="Edit"
+             propagation="none"
+                      id="sustainabilityEdit"
+                rendered="#{empty from}"
+                disabled="#{_sustainability.id != identity.id and not identity.hasRole(roleIDs.WRT_ADMIN_id)}">
+                <f:param name="sustainabilityId"
+                        value="#{_sustainability.id}"/>
+            </s:link>
+        </rich:column>
+    </rich:dataTable>
+
+    </div>
+    </rich:panel>
+
+    <div class="tableControl">
+
+        <s:link view="/SustainabilityList.xhtml"
+            rendered="#{sustainabilityList.previousExists}"
+               value="#{messages.left}#{messages.left} First Page"
+                  id="firstPage">
+          <f:param name="firstResult" value="0"/>
+        </s:link>
+
+        <s:link view="/SustainabilityList.xhtml"
+            rendered="#{sustainabilityList.previousExists}"
+               value="#{messages.left} Previous Page"
+                  id="previousPage">
+            <f:param name="firstResult"
+                    value="#{sustainabilityList.previousFirstResult}"/>
+        </s:link>
+
+        <s:link view="/SustainabilityList.xhtml"
+            rendered="#{sustainabilityList.nextExists}"
+               value="Next Page #{messages.right}"
+                  id="nextPage">
+            <f:param name="firstResult"
+                    value="#{sustainabilityList.nextFirstResult}"/>
+        </s:link>
+
+        <s:link view="/SustainabilityList.xhtml"
+            rendered="#{sustainabilityList.nextExists}"
+               value="Last Page #{messages.right}#{messages.right}"
+                  id="lastPage">
+            <f:param name="firstResult"
+                    value="#{sustainabilityList.lastFirstResult}"/>
+        </s:link>
+
+    </div>
+
+    <s:div styleClass="actionButtons" rendered="#{empty from}">
+        <s:button view="/SustainabilityEdit.xhtml"
+                    id="create"
+           propagation="none"
+                 value="Create Sustainability score">
+            <f:param name="sustainabilityId"/>
+            <f:param name="usersId" value="#{identity.id}"/>
+            <f:param name="projectsId" value="#{activeProjectHome.definedInstance.id}"/>
+        </s:button>
+    </s:div>
+
+</ui:define>
+
+</ui:composition>

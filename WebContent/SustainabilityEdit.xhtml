@@ -1,0 +1,369 @@
+<!--
+Copyright 2013 Imperial College London
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.org/schema/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="sustainability" styleClass="edit">
+
+        <rich:panel style="width:100%;">
+            <f:facet name="header">#{sustainabilityHome.managed ? 'Edit' : 'Add'} Sustainability score</f:facet>
+			
+			<s:decorate id="intro_text" template="layout/display_text.xhtml">
+		            
+				The NHS Institute for Innovation and Improvement has identified 10 factors that
+affect the long term success of improvement initiatives within an organisation.
+As a member of a CLAHRC team you should complete this model, below, prior to
+each Collaborative Learning and Delivery event.  This allows your team to
+<ul>
+<li>understand the range of views within the team,</li>
+<li>identify challenges to sustaining the work of their project,</li>
+<li>prompt discussions on how longer term success can be embedded,</li>
+<li>take action accordingly.</li>
+</ul>
+More information about the NHS Sustainability Model can be found <a href="doc/How_to.pdf">here</a>.<br/>
+
+Please select the current level of each factor that best describes your
+personal perspective of the project. More information on how to complete this
+section can be found <a href="doc/Sustainability_Model.pdf">here</a>.  
+            	
+        	</s:decorate>
+        		
+            <s:decorate id="eventDateField" template="layout/edit_newline.xhtml">
+                <ui:define name="label">CLD event</ui:define>
+                <h:selectOneMenu id="eventDate" value="#{sustainabilityHome.instance.eventDate}" required="true">
+           			<f:selectItems value="#{sustainabilityFieldOptions.events}" itemLabelEscaped="Click to select..."/>
+                    <a:ajax event="change" render="eventDateField" bypassUpdates="true" oncomplete="onAjaxRequestComplete()"/>
+                </h:selectOneMenu>
+            </s:decorate>
+
+
+            <s:decorate id="score1Field" template="layout/edit_newline.xhtml">
+                <ui:define name="label">Benefits beyond helping patients</ui:define>
+                <h:selectOneRadio id="score1" value="#{sustainabilityHome.instance.score1}" required="true" layout="pageDirection">
+           			<f:selectItems value="#{sustainabilityFieldOptions.score1}" itemLabelEscaped="Click to select..."/>
+                </h:selectOneRadio>
+            </s:decorate>
+
+
+            <s:decorate id="score2Field" template="layout/edit_newline.xhtml">
+                <ui:define name="label">Credibility of the evidence</ui:define>
+                <h:selectOneRadio id="score2" value="#{sustainabilityHome.instance.score2}" required="true" layout="pageDirection">
+           			<f:selectItems value="#{sustainabilityFieldOptions.score2}" itemLabelEscaped="Click to select..."/>
+                </h:selectOneRadio>
+            </s:decorate>
+
+
+            <s:decorate id="score3Field" template="layout/edit_newline.xhtml">
+                <ui:define name="label">Adaptability of improved process</ui:define>
+                <h:selectOneRadio id="score3" value="#{sustainabilityHome.instance.score3}" required="true" layout="pageDirection">
+           			<f:selectItems value="#{sustainabilityFieldOptions.score3}" itemLabelEscaped="Click to select..."/>
+                </h:selectOneRadio>
+            </s:decorate>
+
+
+            <s:decorate id="score4Field" template="layout/edit_newline.xhtml">
+                <ui:define name="label">Effectiveness of the system to monitor progress</ui:define>
+                <h:selectOneRadio id="score4" value="#{sustainabilityHome.instance.score4}" required="true" layout="pageDirection">
+           			<f:selectItems value="#{sustainabilityFieldOptions.score4}" itemLabelEscaped="Click to select..."/>
+                </h:selectOneRadio>
+            </s:decorate>
+
+
+            <s:decorate id="score5Field" template="layout/edit_newline.xhtml">
+                <ui:define name="label">Staff involvement and training to sustain the process</ui:define>
+                <h:selectOneRadio id="score5" value="#{sustainabilityHome.instance.score5}" required="true" layout="pageDirection">
+           			<f:selectItems value="#{sustainabilityFieldOptions.score5}" itemLabelEscaped="Click to select..."/>
+                </h:selectOneRadio>
+            </s:decorate>
+
+
+            <s:decorate id="score6Field" template="layout/edit_newline.xhtml">
+                <ui:define name="label">Staff behaviours toward sustaining the change</ui:define>
+                <h:selectOneRadio id="score6" value="#{sustainabilityHome.instance.score6}" required="true" layout="pageDirection">
+           			<f:selectItems value="#{sustainabilityFieldOptions.score6}" itemLabelEscaped="Click to select..."/>
+                </h:selectOneRadio>
+            </s:decorate>
+
+
+            <s:decorate id="score7Field" template="layout/edit_newline.xhtml">
+                <ui:define name="label">Senior leadership engagement</ui:define>
+                <h:selectOneRadio id="score7" value="#{sustainabilityHome.instance.score7}" required="true" layout="pageDirection">
+           			<f:selectItems value="#{sustainabilityFieldOptions.score7}" itemLabelEscaped="Click to select..."/>
+                </h:selectOneRadio>
+            </s:decorate>
+
+
+            <s:decorate id="score8Field" template="layout/edit_newline.xhtml">
+                <ui:define name="label">Clinical leadership engagement</ui:define>
+                <h:selectOneRadio id="score8" value="#{sustainabilityHome.instance.score8}" required="true" layout="pageDirection">
+           			<f:selectItems value="#{sustainabilityFieldOptions.score8}" itemLabelEscaped="Click to select..."/>
+                </h:selectOneRadio>
+            </s:decorate>
+
+
+            <s:decorate id="score9Field" template="layout/edit_newline.xhtml">
+                <ui:define name="label">Fit with the organisation's strategic aims and culture</ui:define>
+                <h:selectOneRadio id="score9" value="#{sustainabilityHome.instance.score9}" required="true" layout="pageDirection">
+           			<f:selectItems value="#{sustainabilityFieldOptions.score9}" itemLabelEscaped="Click to select..."/>
+                </h:selectOneRadio>
+            </s:decorate>
+
+
+            <s:decorate id="score10Field" template="layout/edit_newline.xhtml">
+                <ui:define name="label">Infrastructure for sustainability</ui:define>
+                <h:selectOneRadio id="score10" value="#{sustainabilityHome.instance.score10}" required="true" layout="pageDirection">
+           			<f:selectItems value="#{sustainabilityFieldOptions.score10}" itemLabelEscaped="Click to select..."/>
+                </h:selectOneRadio>
+            </s:decorate>
+
+
+            <s:decorate id="commentField" template="layout/edit_newline.xhtml">
+                <ui:define name="label">Comment</ui:define>
+                <h:inputTextarea id="comment"
+                               cols="80"
+                               rows="10"
+                              value="#{sustainabilityHome.instance.comment}">
+                	<a:ajax event="blur" render="commentField" bypassUpdates="true" oncomplete="onAjaxRequestComplete()"/>
+                </h:inputTextarea>
+            </s:decorate>
+
+
+            <s:decorate id="rcTimestampField" template="layout/edit.xhtml" rendered="#{identity.hasRole(roleIDs.SUPER_ADMIN_id)}">
+                <ui:define name="label">Date Entry Made</ui:define>
+                <rich:calendar id="rcTimestamp" value="#{sustainabilityHome.instance.rcTimestamp}"
+                			   datePattern="dd/MM/yy hh:mm a"/>
+            </s:decorate>
+
+            <div style="clear:both">
+                <span class="required">*</span>
+                required fields
+            </div>
+
+        </rich:panel>
+
+        <div class="actionButtons">
+
+            <h:commandButton id="save"
+                          value="Save"
+                         action="#{sustainabilityHome.persist}"
+                       disabled="#{!sustainabilityHome.wired}"
+                       rendered="#{!sustainabilityHome.managed}">
+                <s:conversationId/>
+            </h:commandButton>
+			
+            <h:commandButton id="update"
+                          value="Update"
+                         action="#{sustainabilityHome.update}"
+                       rendered="#{sustainabilityHome.managed}"
+              		   disabled="#{sustainabilityHome.instance.users.id != identity.id and not identity.hasRole(roleIDs.WRT_ADMIN_id)}">
+                <s:conversationId/>
+            </h:commandButton>
+
+            <a:commandButton id="delete"
+                          value="Delete"
+                     oncomplete="#{rich:component('confirmDeletePanel')}.show();"
+                      immediate="true"
+                       rendered="#{sustainabilityHome.managed}"
+              		   disabled="#{sustainabilityHome.instance.users.id != identity.id and not identity.hasRole(roleIDs.WRT_ADMIN_id)}"/>
+
+            <s:button id="cancelEdit"
+                   value="Cancel"
+             propagation="end"
+                    view="/Sustainability.xhtml"
+                rendered="#{sustainabilityHome.managed}"
+                  action="#{bijectionUtility.clearInstances()}"/>
+
+            <s:button id="cancelAdd"
+                   value="Cancel"
+             propagation="end"
+                    view="/#{empty sustainabilityFrom ? 'SustainabilityList' : sustainabilityFrom}.xhtml"
+                rendered="#{!sustainabilityHome.managed}"
+                  action="#{bijectionUtility.clearInstances('sustainabilityHome')}"/>
+
+        </div>
+        <rich:popupPanel modal="true" id="confirmDeletePanel" moveable="false" resizeable="false" height="135">
+		  <f:facet name="header">Confirm Record Deletion</f:facet> 
+		  <div class="actionButtons">
+		    <rich:panel style="align:center;">
+			  <h:outputText value="Are you sure you want to delete this ?" />
+			  <table width="100%">
+			    <tbody>
+				  <tr>
+				    <td align="center" width="50%">
+					  <a:commandButton type="submit" value="Yes" action="#{sustainabilityHome.remove}"
+					    oncomplete="#{rich:component('confirmDeletePanel')}.hide()"/>
+					</td>
+					<td align="center" width="50%">
+					  <a:commandButton type="submit" value="No" onclick="#{rich:component('confirmDeletePanel')}.hide()"/>
+					</td>
+				  </tr>
+			    </tbody>
+			  </table>
+		    </rich:panel>
+    	  </div> 
+		</rich:popupPanel>
+    </h:form>
+
+<rich:tabPanel rendered="#{identity.hasRole(roleIDs.SUPER_ADMIN_id)}" switchType="client" activeItem="projectsParentTab">
+
+    <rich:tab header="User *" labelClass="required">
+    <div class="association" id="usersParent">
+
+        <h:outputText value="There is no user associated with this sustainability."
+                   rendered="#{sustainabilityHome.instance.users == null}"/>
+
+        <rich:dataTable var="_users"
+                   value="#{sustainabilityHome.instance.users}"
+                rendered="#{sustainabilityHome.instance.users != null}"
+              rowClasses="rvgRowOne,rvgRowTwo"
+                      id="usersTable">
+            <h:column rendered="#{identity.hasRole(roleIDs.SUPER_ADMIN_id)}">
+                <f:facet name="header">Id</f:facet>
+                <h:outputText value="#{_users.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">First name</f:facet>
+                <h:outputText value="#{_users.firstName}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Last name</f:facet>
+                <h:outputText value="#{_users.lastName}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Registration date</f:facet>
+                <h:outputText value="#{_users.registrationDate}">
+                    <f:convertDateTime type="date" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Active</f:facet>
+                <h:outputText value="#{_users.active}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Login name</f:facet>
+                <h:outputText value="#{_users.loginName}"/>
+            </h:column>
+            <h:column rendered="false">
+                <f:facet name="header">Password</f:facet>
+                <h:outputText value="#{_users.password}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Email</f:facet>
+                <h:outputText value="#{_users.email}"/>
+            </h:column>
+        </rich:dataTable>
+
+        <div class="actionButtons">
+            <s:button id="#{sustainabilityHome.instance.users != null ? 'changeusersParent' : 'selectusersParent'}" value="#{sustainabilityHome.instance.users != null ? 'Change' : 'Select'} users"
+                       view="/UsersList.xhtml" disabled="#{not identity.hasRole(roleIDs.SUPER_ADMIN_id)}">
+                <f:param name="from" value="SustainabilityEdit"/>
+            </s:button>
+        </div>
+
+    </div>
+    </rich:tab>
+
+    <rich:tab header="Project *" labelClass="required" id="projectsParentTab">
+    <div class="association" id="projectsParent">
+
+        <h:outputText value="There is no project associated with this sustainability."
+                   rendered="#{sustainabilityHome.instance.projects == null}"/>
+
+        <rich:dataTable var="_projects"
+                   value="#{sustainabilityHome.instance.projects}"
+                rendered="#{sustainabilityHome.instance.projects != null}"
+              rowClasses="rvgRowOne,rvgRowTwo"
+                      id="projectsTable">
+            <h:column rendered="#{identity.hasRole(roleIDs.SUPER_ADMIN_id)}">
+                <f:facet name="header">Id</f:facet>
+                <h:outputText value="#{_projects.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Identifier</f:facet>
+                <h:outputText value="#{_projects.name}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Start date</f:facet>
+                <h:outputText value="#{_projects.startDate}">
+                    <f:convertDateTime type="date" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Implementation start date</f:facet>
+                <h:outputText value="#{_projects.implementationStartDate}">
+                    <f:convertDateTime type="date" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">End date</f:facet>
+                <h:outputText value="#{_projects.endDate}">
+                    <f:convertDateTime type="date" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Label</f:facet>
+                <h:outputText value="#{_projects.shortName}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Description</f:facet>
+                <h:outputText value="#{_projects.description}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Host organization</f:facet>
+                <h:outputText value="#{_projects.hostOrganization}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Site structure</f:facet>
+                <h:outputText value="#{_projects.siteStructure}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Type</f:facet>
+                <h:outputText value="#{_projects.type}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Active</f:facet>
+                <h:outputText value="#{_projects.active}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Grouping</f:facet>
+                <h:outputText value="#{_projects.projectGroupings.name}"/>
+            </h:column>
+        </rich:dataTable>
+
+        <div class="actionButtons">
+            <s:button id="#{sustainabilityHome.instance.projects != null ? 'changeprojectsParent' : 'selectprojectsParent'}" value="#{sustainabilityHome.instance.projects != null ? 'Change' : 'Select'} projects"
+                       view="/ProjectsList.xhtml" disabled="#{not identity.hasRole(roleIDs.SUPER_ADMIN_id)}">
+                <f:param name="from" value="SustainabilityEdit"/>
+            </s:button>
+        </div>
+
+    </div>
+    </rich:tab>
+</rich:tabPanel>
+
+</ui:define>
+
+</ui:composition>

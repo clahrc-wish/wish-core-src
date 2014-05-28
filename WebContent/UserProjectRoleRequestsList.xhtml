@@ -1,0 +1,218 @@
+<!--
+Copyright 2013 Imperial College London
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.org/schema/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/home_template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="userProjectRoleRequestsSearch" styleClass="edit">
+
+        <rich:collapsiblePanel rendered="#{identity.hasRole(roleIDs.SUPER_ADMIN_id)}"
+                               headerClass="collapsiblePanelHeader" switchType="ajax" expanded="false">
+			<f:facet name="headerCollapsed">Project Role Requests Search (click to expand)</f:facet>
+			<f:facet name="headerExpanded">Project Role Requests Search (click to collapse)</f:facet>
+
+            <s:decorate template="layout/display.xhtml">
+                <ui:define name="label">Match</ui:define>
+                <h:selectOneRadio id="logic" value="#{userProjectRoleRequestsList.restrictionLogicOperator}" styleClass="radio">
+                    <f:selectItem itemLabel="All" itemValue="and" itemDisabled="#{not identity.hasRole(roleIDs.WRT_ADMIN_id)}"/>
+                    <f:selectItem itemLabel="Any" itemValue="or"/>
+                </h:selectOneRadio>
+            </s:decorate>
+
+			<br />
+			<div>
+            	<h:commandButton id="search" value="Search" action="/UserProjectRoleRequestsList.xhtml"/>
+            	<s:button id="reset" value="Reset" includePageParams="false"/>
+        	</div>
+			
+        </rich:collapsiblePanel>
+        
+    </h:form>
+
+	<s:div styleClass="actionButtons" rendered="#{empty from}">
+        <s:button view="/UserProjectRoleRequestsCreate.xhtml"
+                    id="createDuplicate"
+           propagation="none"
+                 value="Request Project Role">
+            <f:param name="userProjectRoleRequestsUserId" value="#{identity.id}"/>
+            <f:param name="userProjectRoleRequestsProjectId"/>
+            <f:param name="usersId" value="#{identity.id}"/>
+            <f:param name="rolesId" value="#{roleIDs.PROJECT_VIEWER_id}"/>
+        </s:button>
+    </s:div>
+    
+    <rich:panel>
+        <f:facet name="header">Project Role Requests Search Results (#{empty userProjectRoleRequestsList.resultList ? 0 : (userProjectRoleRequestsList.paginated ? userProjectRoleRequestsList.resultCount : userProjectRoleRequestsList.resultList.size)})</f:facet>
+    <div class="results" id="userProjectRoleRequestsList">
+
+    <h:outputText value="The User Project Role Requests search returned no results."
+               rendered="#{empty userProjectRoleRequestsList.resultList}"/>
+
+    <rich:dataTable id="userProjectRoleRequestsList"
+                var="_userProjectRoleRequests"
+              value="#{userProjectRoleRequestsList.resultList}"
+           rendered="#{not empty userProjectRoleRequestsList.resultList}">
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{userProjectRoleRequestsList}"/>
+                    <ui:param name="propertyLabel" value="User"/>
+                    <ui:param name="propertyPath" value="userProjectRoleRequests.users.loginName"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_userProjectRoleRequests.users.loginName}" style="#{_userProjectRoleRequests.users.id == identity.id ? 'background-color:lightgrey;' : ''}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{userProjectRoleRequestsList}"/>
+                    <ui:param name="propertyLabel" value="Project"/>
+                    <ui:param name="propertyPath" value="userProjectRoleRequests.projects.shortName"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_userProjectRoleRequests.projects.shortName}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{userProjectRoleRequestsList}"/>
+                    <ui:param name="propertyLabel" value="Role"/>
+                    <ui:param name="propertyPath" value="userProjectRoleRequests.roles.name"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_userProjectRoleRequests.roles.name}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{userProjectRoleRequestsList}"/>
+                    <ui:param name="propertyLabel" value="Date Request Made"/>
+                    <ui:param name="propertyPath" value="userProjectRoleRequests.rcTimestamp"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_userProjectRoleRequests.rcTimestamp}">
+                <f:convertDateTime type="both" dateStyle="short"/>
+            </h:outputText>
+        </h:column>
+        <rich:column styleClass="action">
+            <f:facet name="header">Action</f:facet>
+            <s:link view="/#{empty from ? 'UserProjectRoleRequests' : from}.xhtml"
+                   value="#{empty from ? 'View' : 'Select'}"
+             propagation="#{empty from ? 'none' : 'default'}"
+                      id="userProjectRoleRequestsViewId">
+                <f:param name="userProjectRoleRequestsUserId"
+                        value="#{_userProjectRoleRequests.id.userId}"/>
+                <f:param name="userProjectRoleRequestsProjectId"
+                        value="#{_userProjectRoleRequests.id.projectId}"/>
+            </s:link>
+            #{' '}
+            <s:link view="/UserProjectRoleRequestsEdit.xhtml"
+                   value="Edit"
+             propagation="none"
+                      id="userProjectRoleRequestsEdit"
+                rendered="#{empty from}"
+                disabled="#{_userProjectRoleRequests.id.userId != identity.id}">
+                <f:param name="userProjectRoleRequestsUserId"
+                        value="#{_userProjectRoleRequests.id.userId}"/>
+                <f:param name="userProjectRoleRequestsProjectId"
+                        value="#{_userProjectRoleRequests.id.projectId}"/>
+            </s:link>
+            #{' '}
+            <s:link view="/UserProjectRoleRequestsEdit.xhtml"
+                   value="Approve"
+             propagation="none"
+                      id="userProjectRoleRequestsApprove"
+                rendered="#{empty from and identity.hasPermission(_userProjectRoleRequests.id.projectId, roleIDs.PROJECT_ADMIN_id, '')}">
+                <f:param name="userProjectRoleRequestsUserId"
+                        value="#{_userProjectRoleRequests.id.userId}"/>
+                <f:param name="userProjectRoleRequestsProjectId"
+                        value="#{_userProjectRoleRequests.id.projectId}"/>
+            </s:link>
+            #{' '}
+            <s:link view="/UserProjectRoleRequestsEdit.xhtml"
+                   value="Deny"
+             propagation="none"
+                      id="userProjectRoleRequestsDeny"
+                rendered="#{empty from and identity.hasPermission(_userProjectRoleRequests.id.projectId, roleIDs.PROJECT_ADMIN_id, '')}">
+                <f:param name="userProjectRoleRequestsUserId"
+                        value="#{_userProjectRoleRequests.id.userId}"/>
+                <f:param name="userProjectRoleRequestsProjectId"
+                        value="#{_userProjectRoleRequests.id.projectId}"/>
+            </s:link>
+        </rich:column>
+    </rich:dataTable>
+
+    </div>
+    </rich:panel>
+
+    <div class="tableControl">
+
+        <s:link view="/UserProjectRoleRequestsList.xhtml"
+            rendered="#{userProjectRoleRequestsList.previousExists}"
+               value="#{messages.left}#{messages.left} First Page"
+                  id="firstPage">
+          <f:param name="firstResult" value="0"/>
+        </s:link>
+
+        <s:link view="/UserProjectRoleRequestsList.xhtml"
+            rendered="#{userProjectRoleRequestsList.previousExists}"
+               value="#{messages.left} Previous Page"
+                  id="previousPage">
+            <f:param name="firstResult"
+                    value="#{userProjectRoleRequestsList.previousFirstResult}"/>
+        </s:link>
+
+        <s:link view="/UserProjectRoleRequestsList.xhtml"
+            rendered="#{userProjectRoleRequestsList.nextExists}"
+               value="Next Page #{messages.right}"
+                  id="nextPage">
+            <f:param name="firstResult"
+                    value="#{userProjectRoleRequestsList.nextFirstResult}"/>
+        </s:link>
+
+        <s:link view="/UserProjectRoleRequestsList.xhtml"
+            rendered="#{userProjectRoleRequestsList.nextExists}"
+               value="Last Page #{messages.right}#{messages.right}"
+                  id="lastPage">
+            <f:param name="firstResult"
+                    value="#{userProjectRoleRequestsList.lastFirstResult}"/>
+        </s:link>
+
+    </div>
+
+    <s:div styleClass="actionButtons" rendered="#{empty from}">
+        <s:button view="/UserProjectRoleRequestsCreate.xhtml"
+                    id="create"
+           propagation="none"
+                 value="Request Project Role">
+            <f:param name="userProjectRoleRequestsUserId" value="#{identity.id}"/>
+            <f:param name="userProjectRoleRequestsProjectId"/>
+            <f:param name="usersId" value="#{identity.id}"/>
+            <f:param name="rolesId" value="#{roleIDs.PROJECT_VIEWER_id}"/>
+        </s:button>
+    </s:div>
+
+</ui:define>
+
+</ui:composition>

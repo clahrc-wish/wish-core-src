@@ -1,0 +1,310 @@
+<!--
+Copyright 2013 Imperial College London
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.org/schema/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/home_template.xhtml">
+
+<ui:define name="body">
+
+	<h:outputText value="Use the tabs to select a project ; pressing the respective buttons within the tab to add one to the review panel."/>
+	<h:outputText value="Once a project is selected, press the 'Request' button under the review panel" />
+	<p></p>
+	<h:outputText value="1. Select the Project you want access to:" />
+	<rich:tabPanel switchType="client" activeItem="projectsParentTab">
+	
+	    <rich:tab header="User *" labelClass="required">
+		    <div class="association" id="usersParent">
+		
+		        <h:outputText value="There is no user associated with this Project Role Request."
+		                   rendered="#{userProjectRoleRequestsHome.instance.users == null}"/>
+		
+		        <rich:dataTable var="_users"
+		                   value="#{userProjectRoleRequestsHome.instance.users}"
+		                rendered="#{userProjectRoleRequestsHome.instance.users != null}"
+		              rowClasses="rvgRowOne,rvgRowTwo"
+		                      id="usersTable">
+		            <h:column rendered="#{identity.hasRole(roleIDs.SUPER_ADMIN_id)}">
+		                <f:facet name="header">Id</f:facet>
+		                <h:outputText value="#{_users.id}"/>
+		            </h:column>
+		            <h:column>
+		                <f:facet name="header">First name</f:facet>
+		                <h:outputText value="#{_users.firstName}"/>
+		            </h:column>
+		            <h:column>
+		                <f:facet name="header">Last name</f:facet>
+		                <h:outputText value="#{_users.lastName}"/>
+		            </h:column>
+		            <h:column>
+		                <f:facet name="header">Registration date</f:facet>
+		                <h:outputText value="#{_users.registrationDate}">
+		                    <f:convertDateTime type="date" dateStyle="short"/>
+		                </h:outputText>
+		            </h:column>
+		            <h:column>
+		                <f:facet name="header">Active</f:facet>
+		                <h:outputText value="#{_users.active}"/>
+		            </h:column>
+		            <h:column>
+		                <f:facet name="header">Login name</f:facet>
+		                <h:outputText value="#{_users.loginName}"/>
+		            </h:column>
+		            <h:column rendered="false">
+		                <f:facet name="header">Password</f:facet>
+		                <h:outputText value="#{_users.password}"/>
+		            </h:column>
+		            <h:column>
+		                <f:facet name="header">Email</f:facet>
+		                <h:outputText value="#{_users.email}"/>
+		            </h:column>
+		        </rich:dataTable>
+		
+		        <div class="actionButtons">
+		            <s:button id="#{userProjectRoleRequestsHome.instance.users != null ? 'changeusersParent' : 'selectusersParent'}" value="#{userProjectRoleRequestsHome.instance.users != null ? 'Change' : 'Select'} user"
+		                       view="/UsersList.xhtml" disabled="true">
+		                <f:param name="from" value="UserProjectRoleRequestsCreate"/>
+		            </s:button>
+		        </div>
+		
+		    </div>
+	    </rich:tab>
+	
+	    <rich:tab header="Project *" labelClass="required" id="projectsParentTab">
+		    <div class="association" id="projectsParent">
+		
+		        <h:outputText value="There is no project associated with this Project Role Request."
+		                   rendered="#{userProjectRoleRequestsHome.instance.projects == null}"/>
+		
+		        <rich:dataTable var="_projects"
+		                   value="#{userProjectRoleRequestsHome.instance.projects}"
+		                rendered="#{userProjectRoleRequestsHome.instance.projects != null}"
+		              rowClasses="rvgRowOne,rvgRowTwo"
+		                      id="projectsTable">
+		            <h:column rendered="#{identity.hasRole(roleIDs.SUPER_ADMIN_id)}">
+		                <f:facet name="header">Id</f:facet>
+		                <h:outputText value="#{_projects.id}"/>
+		            </h:column>
+		            <h:column>
+		                <f:facet name="header">Identifier</f:facet>
+		                <h:outputText value="#{_projects.name}"/>
+		            </h:column>
+		            <h:column>
+		                <f:facet name="header">Start date</f:facet>
+		                <h:outputText value="#{_projects.startDate}">
+		                    <f:convertDateTime type="date" dateStyle="short"/>
+		                </h:outputText>
+		            </h:column>
+		            <h:column>
+		                <f:facet name="header">Implementation start date</f:facet>
+		                <h:outputText value="#{_projects.implementationStartDate}">
+		                    <f:convertDateTime type="date" dateStyle="short"/>
+		                </h:outputText>
+		            </h:column>
+		            <h:column>
+		                <f:facet name="header">End date</f:facet>
+		                <h:outputText value="#{_projects.endDate}">
+		                    <f:convertDateTime type="date" dateStyle="short"/>
+		                </h:outputText>
+		            </h:column>
+		            <h:column>
+		                <f:facet name="header">Label</f:facet>
+		                <h:outputText value="#{_projects.shortName}"/>
+		            </h:column>
+		            <h:column>
+		                <f:facet name="header">Description</f:facet>
+		                <h:outputText value="#{_projects.description}"/>
+		            </h:column>
+		            <h:column>
+		                <f:facet name="header">Host organization</f:facet>
+		                <h:outputText value="#{_projects.hostOrganization}"/>
+		            </h:column>
+		            <h:column>
+		                <f:facet name="header">Site structure</f:facet>
+		                <h:outputText value="#{_projects.siteStructure}"/>
+		            </h:column>
+		            <h:column>
+		                <f:facet name="header">Type</f:facet>
+		                <h:outputText value="#{_projects.type}"/>
+		            </h:column>
+		            <h:column>
+		                <f:facet name="header">Active</f:facet>
+		                <h:outputText value="#{_projects.active}"/>
+		            </h:column>
+		            <h:column>
+		                <f:facet name="header">Grouping</f:facet>
+		                <h:outputText value="#{_projects.projectGroupings.name}"/>
+		            </h:column>
+		        </rich:dataTable>
+		
+		        <div class="actionButtons">
+		            <s:button id="#{userProjectRoleRequestsHome.instance.projects != null ? 'changeprojectsParent' : 'selectprojectsParent'}" value="#{userProjectRoleRequestsHome.instance.projects != null ? 'Change' : 'Select'} project"
+		                       view="/ProjectsList.xhtml">
+		                <f:param name="from" value="UserProjectRoleRequestsCreate"/>
+		            </s:button>
+		        </div>
+		
+		    </div>
+	    </rich:tab>
+	
+	    <rich:tab header="Role *" labelClass="required">
+		    <div class="association" id="rolesParent">
+		
+		        <h:outputText value="There is no role associated with this Project Role Request."
+		                   rendered="#{userProjectRoleRequestsHome.instance.roles == null}"/>
+		
+		        <rich:dataTable var="_roles"
+		                   value="#{userProjectRoleRequestsHome.instance.roles}"
+		                rendered="#{userProjectRoleRequestsHome.instance.roles != null}"
+		              rowClasses="rvgRowOne,rvgRowTwo"
+		                      id="rolesTable">
+		            <h:column rendered="#{identity.hasRole(roleIDs.SUPER_ADMIN_id)}">
+		                <f:facet name="header">Id</f:facet>
+		                <h:outputText value="#{_roles.id}"/>
+		            </h:column>
+		            <h:column>
+		                <f:facet name="header">Name</f:facet>
+		                <h:outputText value="#{_roles.name}"/>
+		            </h:column>
+		            <h:column>
+		                <f:facet name="header">Description</f:facet>
+		                <h:outputText value="#{_roles.description}"/>
+		            </h:column>
+		        </rich:dataTable>
+		
+		        <div class="actionButtons">
+		            <s:button id="#{userProjectRoleRequestsHome.instance.roles != null ? 'changerolesParent' : 'selectrolesParent'}" value="#{userProjectRoleRequestsHome.instance.roles != null ? 'Change' : 'Select'} role"
+		                       view="/RolesList.xhtml" disabled="true">
+		                <f:param name="from" value="UserProjectRoleRequestsCreate"/>
+		            </s:button>
+		        </div>
+		
+		    </div>
+	    </rich:tab>
+	</rich:tabPanel>
+	<p></p>
+	
+	<h:outputText value="2. Review your Project access request:" />
+    <h:form id="userProjectRoleRequests" styleClass="edit">
+
+        <rich:panel styleClass="userProjectRolePanel" headerClass="userProjectRolePanelHeader" bodyClass="userProjectRolePanelBody">
+            <f:facet name="header">#{userProjectRoleRequestsHome.managed ? 'Edit' : 'Add'} Project Role Request detail</f:facet>
+
+
+            <s:decorate id="userIdField" template="layout/edit.xhtml">
+                <ui:define name="label">User</ui:define>
+                <h:inputText id="userId"
+                       required="true"
+                       disabled="#{userProjectRoleRequestsHome.managed}"
+                          value="#{userProjectRoleRequestsHome.instance.users.loginName}"
+                       readonly="true"
+                          style="color: lightgray;">
+                    <a:ajax event="blur" render="userIdField" bypassUpdates="true" oncomplete="onAjaxRequestComplete()"/>
+                </h:inputText>
+            </s:decorate>
+
+            <s:decorate id="projectIdField" template="layout/edit.xhtml">
+                <ui:define name="label">Project</ui:define>
+                <h:inputText id="projectId"
+                       required="true"
+                       disabled="#{userProjectRoleRequestsHome.managed}"
+                          value="#{userProjectRoleRequestsHome.instance.projects.shortName}"
+                       readonly="true"
+                          style="color: lightgray;">
+                    <a:ajax event="blur" render="projectIdField" bypassUpdates="true" oncomplete="onAjaxRequestComplete()"/>
+                </h:inputText>
+            </s:decorate>
+
+			<s:decorate id="roleIdField" template="layout/edit.xhtml">
+                <ui:define name="label">Role</ui:define>
+                <h:inputText id="roleId"
+                       required="true"
+                       disabled="#{userProjectRoleRequestsHome.managed}"
+                          value="#{userProjectRoleRequestsHome.instance.roles.name}"
+                       readonly="true"
+                          style="color: lightgray;">
+                    <a:ajax event="blur" render="roleIdField" bypassUpdates="true" oncomplete="onAjaxRequestComplete()"/>
+                </h:inputText>
+            </s:decorate>
+
+
+
+            <s:decorate id="rcTimestampField" template="layout/edit.xhtml" rendered="#{identity.hasRole(roleIDs.SUPER_ADMIN_id)}">
+                <ui:define name="label">Rc timestamp</ui:define>
+                <rich:calendar id="rcTimestamp" value="#{userProjectRoleRequestsHome.instance.rcTimestamp}" 
+                               datePattern="dd/MM/yy hh:mm a"/>
+            </s:decorate>
+
+            <div style="clear:both">
+                <span class="required">*</span>
+                required fields
+            </div>
+
+        </rich:panel>
+
+        <div class="actionButtons">
+
+            <a:commandButton id="request"
+                          value="Request"
+                     oncomplete="#{rich:component('confirmCreatePanel')}.show();"
+                       disabled="#{!userProjectRoleRequestsHome.wired}"
+                       rendered="#{!userProjectRoleRequestsHome.managed}">
+                <s:conversationId/>
+            </a:commandButton>
+
+            <s:button id="cancelAdd"
+                   value="Cancel"
+             propagation="end"
+                    view="/#{empty userProjectRoleRequestsFrom ? 'UserProjectRoleRequestsList' : userProjectRoleRequestsFrom}.xhtml"
+                rendered="#{!userProjectRoleRequestsHome.managed}"
+                  action="#{bijectionUtility.clearInstances('userProjectRoleRequestsHome')}"/>
+
+        </div>
+        <rich:popupPanel modal="true" id="confirmCreatePanel" moveable="false" resizeable="false" height="135">
+		  <f:facet name="header">Confirm Project Role Request</f:facet> 
+		  <div class="actionButtons">
+		    <rich:panel style="align:center;">
+			  <h:outputText value="Are you sure you want to request access to this project ?" />
+			  <table width="100%">
+			    <tbody>
+				  <tr>
+				    <td align="center" width="50%">
+					  <a:commandButton type="submit" value="Yes" action="#{userProjectRoleRequestsHome.persist}"
+					    oncomplete="#{rich:component('confirmCreatePanel')}.hide()">
+					    <s:conversationId/>
+					  </a:commandButton>
+					</td>
+					<td align="center" width="50%">
+					  <a:commandButton type="submit" value="No" onclick="#{rich:component('confirmCreatePanel')}.hide()"/>
+					</td>
+				  </tr>
+			    </tbody>
+			  </table>
+		    </rich:panel>
+    	  </div> 
+		</rich:popupPanel>
+    </h:form>
+
+
+</ui:define>
+
+</ui:composition>

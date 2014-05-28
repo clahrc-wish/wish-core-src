@@ -1,0 +1,68 @@
+<!--
+Copyright 2013 Imperial College London
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.org/schema/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/login_template.xhtml">
+
+<ui:define name="body">
+
+        <rich:panel>
+                <h:outputText value="The &lt;b&gt;Web Improvement Support for Healthcare (WISH)&lt;/b&gt; is for your project(s) to share data with everyone in the team, wherever there is internet access, allowing everyone to know what is going on, and to be able to add their own experiences and comments as the “story” of your improvement initiative develops. Please log in below."
+                              escape="false" 
+                              style="font-size: 14px; width: 100%;" />
+        </rich:panel>
+
+    <h:form id="loginForm">
+                
+        <rich:panel>
+            <f:facet name="header">Login to #{installationName}</f:facet>
+
+            <p>Please login here</p>
+
+            <div class="dialog">
+                <h:panelGrid columns="2" rowClasses="prop" columnClasses="name,value">
+                    <h:outputLabel for="username">Username</h:outputLabel>
+                    <h:inputText id="username" value="#{credentials.username}" disabled="#{identity.loggedIn}"/>
+                    <h:outputLabel for="password">Password</h:outputLabel>
+                    <h:inputSecret id="password" value="#{credentials.password}" disabled="#{identity.loggedIn}"/>
+                    <h:outputLabel for="rememberMe">Remember me</h:outputLabel>
+                    <h:selectBooleanCheckbox id="rememberMe" value="#{rememberMe.enabled}" disabled="#{identity.loggedIn}"/>
+                </h:panelGrid>
+            </div>
+
+        </rich:panel>
+
+        <div class="actionButtons">
+                <h:commandButton id="submit" value="Login" action="#{identity.login}"/>
+                <p />
+                <h:commandButton id="forgot" value="I forgot my password" action="#{mailSender.sendForgotten}" disabled="#{identity.loggedIn}"/>
+        </div>
+    </h:form>
+
+        <rich:panel>
+                <h:outputText value="WISH has been developed by the National Institute for Health Research (NIHR) Collaboration for Leadership in Applied Health Research and Care for Northwest London (CLAHRC NWL), with partners from Dept. Medicine and Dept. Computing of Imperial College, London; and from the Chelsea and Westminster Hospital."
+                              style="font-size: 10px; width: 100%;" />
+        </rich:panel>
+
+ </ui:define>
+</ui:composition>

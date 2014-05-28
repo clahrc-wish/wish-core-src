@@ -1,0 +1,276 @@
+<!--
+Copyright 2013 Imperial College London
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.org/schema/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+
+<ui:define name="body">
+
+    <rich:panel>
+        <f:facet name="header">PDSA cycle details</f:facet>
+
+		<s:decorate id="cycleTitle" template="layout/display.xhtml">
+            <ui:define name="label">Cycle title</ui:define>
+            <h:outputText value="#{pdsaHome.instance.cycleTitle}"/>
+        </s:decorate>
+
+		<s:decorate id="description" template="layout/display.xhtml">
+            <ui:define name="label">Description</ui:define>
+            <h:outputText value="#{pdsaHome.instance.description}"/>
+        </s:decorate>
+
+        <s:decorate id="planTeam" template="layout/display.xhtml">
+            <ui:define name="label">Plan team</ui:define>
+            <h:outputText value="#{pdsaHome.instance.planTeam}"/>
+        </s:decorate>
+
+        <s:decorate id="eventDate" template="layout/display.xhtml">
+            <ui:define name="label">Plan date</ui:define>
+            <h:outputText value="#{pdsaHome.instance.eventDate}">
+                <f:convertDateTime type="date" dateStyle="short"/>
+            </h:outputText>
+        </s:decorate>
+
+        <s:decorate id="doDescription" template="layout/display.xhtml">
+            <ui:define name="label">Do description</ui:define>
+            <h:outputText value="#{pdsaHome.instance.doDescription}"/>
+        </s:decorate>
+
+		<s:decorate id="doTeam" template="layout/display.xhtml">
+            <ui:define name="label">Do team</ui:define>
+            <h:outputText value="#{pdsaHome.instance.doTeam}"/>
+        </s:decorate>
+
+        <s:decorate id="doDate" template="layout/display.xhtml">
+            <ui:define name="label">Do date</ui:define>
+            <h:outputText value="#{pdsaHome.instance.doDate}">
+                <f:convertDateTime type="date" dateStyle="short"/>
+            </h:outputText>
+        </s:decorate>
+
+        <s:decorate id="studyDescription" template="layout/display.xhtml">
+            <ui:define name="label">Study description</ui:define>
+            <h:outputText value="#{pdsaHome.instance.studyDescription}"/>
+        </s:decorate>
+
+		<s:decorate id="studyTeam" template="layout/display.xhtml">
+            <ui:define name="label">Study team</ui:define>
+            <h:outputText value="#{pdsaHome.instance.studyTeam}"/>
+        </s:decorate>
+
+        <s:decorate id="studyDate" template="layout/display.xhtml">
+            <ui:define name="label">Study date</ui:define>
+            <h:outputText value="#{pdsaHome.instance.studyDate}">
+                <f:convertDateTime type="date" dateStyle="short"/>
+            </h:outputText>
+        </s:decorate>
+
+        <s:decorate id="actDescription" template="layout/display.xhtml">
+            <ui:define name="label">Act description</ui:define>
+            <h:outputText value="#{pdsaHome.instance.actDescription}"/>
+        </s:decorate>
+
+        <s:decorate id="actTeam" template="layout/display.xhtml">
+            <ui:define name="label">Act team</ui:define>
+            <h:outputText value="#{pdsaHome.instance.actTeam}"/>
+        </s:decorate>
+
+        <s:decorate id="actDate" template="layout/display.xhtml">
+            <ui:define name="label">Act date</ui:define>
+            <h:outputText value="#{pdsaHome.instance.actDate}">
+                <f:convertDateTime type="date" dateStyle="short"/>
+            </h:outputText>
+        </s:decorate>
+
+        <s:decorate id="rcTimestamp" template="layout/display.xhtml">
+            <ui:define name="label">Date Entry Made</ui:define>
+            <h:outputText value="#{pdsaHome.instance.rcTimestamp}">
+                <f:convertDateTime type="both" dateStyle="short"/>
+            </h:outputText>
+        </s:decorate>
+
+        <div style="clear:both"/>
+
+    </rich:panel>
+
+    <div class="actionButtons">
+
+        <s:button view="/PdsaEdit.xhtml"
+                    id="edit"
+                 value="Edit"/>
+
+        <s:button view="/#{empty pdsaFrom ? 'PdsaList' : pdsaFrom}.xhtml"
+                    id="done"
+                 value="Done"
+                action="#{bijectionUtility.clearInstances('pdsaHome')}"/>
+
+    </div>
+
+    <rich:tabPanel switchType="client" activeItem="projectsParentTab">
+
+    <rich:tab>
+        <f:facet name="header">
+            <h:panelGroup><h:graphicImage value="/img/manytoone.gif" style="vertical-align: middle; padding-right: 4px;"/>User</h:panelGroup>
+        </f:facet>
+    <div class="association" id="usersParent">
+
+        <h:outputText value="There is no user associated with this pdsa."
+                   rendered="#{pdsaHome.instance.users == null}"/>
+
+        <rich:dataTable var="_users"
+                   value="#{pdsaHome.instance.users}"
+                rendered="#{pdsaHome.instance.users != null}"
+              rowClasses="rvgRowOne,rvgRowTwo"
+                      id="usersTable">
+            <h:column rendered="#{identity.hasRole(roleIDs.SUPER_ADMIN_id)}">
+                <f:facet name="header">Id</f:facet>
+                <h:outputText value="#{_users.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">First name</f:facet>
+                <h:outputText value="#{_users.firstName}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Last name</f:facet>
+                <h:outputText value="#{_users.lastName}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Registration date</f:facet>
+                <h:outputText value="#{_users.registrationDate}">
+                    <f:convertDateTime type="date" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Active</f:facet>
+                <h:outputText value="#{_users.active}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Login name</f:facet>
+                <h:outputText value="#{_users.loginName}"/>
+            </h:column>
+            <h:column rendered="false">
+                <f:facet name="header">Password</f:facet>
+                <h:outputText value="#{_users.password}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Email</f:facet>
+                <h:outputText value="#{_users.email}"/>
+            </h:column>
+            <h:column styleClass="action">
+                <f:facet name="header">Action</f:facet>
+                <s:link id="viewusers"
+                     value="View"
+                      view="/Users.xhtml">
+                    <f:param name="usersId"
+                           value="#{_users.id}"/>
+                </s:link>
+            </h:column>
+        </rich:dataTable>
+
+    </div>
+    </rich:tab>
+
+    <rich:tab id="projectsParentTab">
+        <f:facet name="header">
+            <h:panelGroup><h:graphicImage value="/img/manytoone.gif" style="vertical-align: middle; padding-right: 4px;"/>Project</h:panelGroup>
+        </f:facet>
+    <div class="association" id="projectsParent">
+
+        <h:outputText value="There is no project associated with this pdsa."
+                   rendered="#{pdsaHome.instance.projects == null}"/>
+
+        <rich:dataTable var="_projects"
+                   value="#{pdsaHome.instance.projects}"
+                rendered="#{pdsaHome.instance.projects != null}"
+              rowClasses="rvgRowOne,rvgRowTwo"
+                      id="projectsTable">
+            <h:column rendered="#{identity.hasRole(roleIDs.SUPER_ADMIN_id)}">
+                <f:facet name="header">Id</f:facet>
+                <h:outputText value="#{_projects.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Identifier</f:facet>
+                <h:outputText value="#{_projects.name}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Start date</f:facet>
+                <h:outputText value="#{_projects.startDate}">
+                    <f:convertDateTime type="date" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Implementation start date</f:facet>
+                <h:outputText value="#{_projects.implementationStartDate}">
+                    <f:convertDateTime type="date" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">End date</f:facet>
+                <h:outputText value="#{_projects.endDate}">
+                    <f:convertDateTime type="date" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Label</f:facet>
+                <h:outputText value="#{_projects.shortName}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Description</f:facet>
+                <h:outputText value="#{_projects.description}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Host organization</f:facet>
+                <h:outputText value="#{_projects.hostOrganization}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Site structure</f:facet>
+                <h:outputText value="#{_projects.siteStructure}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Type</f:facet>
+                <h:outputText value="#{_projects.type}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Active</f:facet>
+                <h:outputText value="#{_projects.active}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Grouping</f:facet>
+                <h:outputText value="#{_projects.projectGroupings.name}"/>
+            </h:column>
+            <h:column styleClass="action">
+                <f:facet name="header">Action</f:facet>
+                <s:link id="viewprojects"
+                     value="View"
+                      view="/Projects.xhtml">
+                    <f:param name="projectsId"
+                           value="#{_projects.id}"/>
+                </s:link>
+            </h:column>
+        </rich:dataTable>
+
+    </div>
+    </rich:tab>
+</rich:tabPanel>
+</ui:define>
+
+</ui:composition>

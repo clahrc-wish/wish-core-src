@@ -1,0 +1,236 @@
+<!--
+Copyright 2013 Imperial College London
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.org/schema/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="commentSearch" styleClass="edit">
+
+        <rich:collapsiblePanel headerClass="collapsiblePanelHeader" switchType="ajax" expanded="false">
+			<f:facet name="headerCollapsed">Comment Search (click to expand)</f:facet>
+			<f:facet name="headerExpanded">Comment Search (click to collapse)</f:facet>
+
+            <s:decorate template="layout/display.xhtml">
+                <ui:define name="label">Comment</ui:define>
+                <h:inputText id="comment" value="#{commentList.comment.comment}"/>
+            </s:decorate>
+
+            <s:decorate template="layout/display.xhtml">
+                <ui:define name="label">Match</ui:define>
+                <h:selectOneRadio id="logic" value="#{commentList.restrictionLogicOperator}" styleClass="radio">
+                    <f:selectItem itemLabel="All" itemValue="and"/>
+                    <f:selectItem itemLabel="Any" itemValue="or" itemDisabled="#{not identity.hasRole(roleIDs.WRT_ADMIN_id)}"/>
+                </h:selectOneRadio>
+            </s:decorate>
+
+			<br />
+			<div>
+	            <h:commandButton id="search" value="Search" action="/CommentList.xhtml"/>
+	            <s:button id="reset" value="Reset" includePageParams="false"/>
+	        </div>
+	        
+        </rich:collapsiblePanel>
+
+    </h:form>
+
+	<s:div styleClass="actionButtons" rendered="#{empty from}">
+        <s:button view="/CommentEdit.xhtml"
+                    id="createDuplicate"
+           propagation="none"
+                 value="Create comment">
+            <f:param name="commentId"/>
+            <f:param name="usersId" value="#{identity.id}"/>
+            <f:param name="projectsId" value="#{activeProjectHome.definedInstance.id}"/>
+        </s:button>
+    </s:div>
+    
+    <rich:panel>
+        <f:facet name="header">Comment Search Results (#{empty commentList.resultList ? 0 : (commentList.paginated ? commentList.resultCount : commentList.resultList.size)})</f:facet>
+    <div class="results" id="commentList">
+
+    <h:outputText value="The Comment record search returned no results."
+               rendered="#{empty commentList.resultList}"/>
+
+    <rich:dataTable id="commentList"
+                var="_comment"
+              value="#{commentList.resultList}"
+           rendered="#{not empty commentList.resultList}">
+        <rich:column styleClass="action">
+            <f:facet name="header">Action</f:facet>
+            <s:link view="/#{empty from ? 'Comment' : from}.xhtml"
+                   value="#{empty from ? 'View' : 'Select'}"
+             propagation="#{empty from ? 'none' : 'default'}"
+                      id="commentViewIdDuplicate">
+                <f:param name="commentId"
+                        value="#{_comment.id}"/>
+            </s:link>
+            #{' '}
+            <s:link view="/CommentEdit.xhtml"
+                   value="Edit"
+             propagation="none"
+                      id="commentEditDuplicate"
+                rendered="#{empty from}"
+                disabled="#{_comment.id != identity.id and not identity.hasRole(roleIDs.WRT_ADMIN_id)}">
+                <f:param name="commentId"
+                        value="#{_comment.id}"/>
+            </s:link>
+        </rich:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{commentList}"/>
+                    <ui:param name="propertyLabel" value="Entry ID"/>
+                    <ui:param name="propertyPath" value="comment.id"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_comment.id}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{commentList}"/>
+                    <ui:param name="propertyLabel" value="User"/>
+                    <ui:param name="propertyPath" value="comment.users.loginName"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_comment.users.loginName}" style="#{(_comment.users.id == identity.id) and identity.hasRole(roleIDs.PROJECT_ADMIN_id) ? 'background-color:lightgrey;' : ''}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{commentList}"/>
+                    <ui:param name="propertyLabel" value="Project"/>
+                    <ui:param name="propertyPath" value="comment.projects.shortName"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_comment.projects.shortName}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{commentList}"/>
+                    <ui:param name="propertyLabel" value="Event date"/>
+                    <ui:param name="propertyPath" value="comment.eventDate"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_comment.eventDate}">
+                <f:convertDateTime type="date" dateStyle="short"/>
+            </h:outputText>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{commentList}"/>
+                    <ui:param name="propertyLabel" value="Comment"/>
+                    <ui:param name="propertyPath" value="comment.comment"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_comment.comment}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{commentList}"/>
+                    <ui:param name="propertyLabel" value="Date Entry Made"/>
+                    <ui:param name="propertyPath" value="comment.rcTimestamp"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_comment.rcTimestamp}">
+                <f:convertDateTime type="both" dateStyle="short"/>
+            </h:outputText>
+        </h:column>
+        <rich:column styleClass="action">
+            <f:facet name="header">Action</f:facet>
+            <s:link view="/#{empty from ? 'Comment' : from}.xhtml"
+                   value="#{empty from ? 'View' : 'Select'}"
+             propagation="#{empty from ? 'none' : 'default'}"
+                      id="commentViewId">
+                <f:param name="commentId"
+                        value="#{_comment.id}"/>
+            </s:link>
+            #{' '}
+            <s:link view="/CommentEdit.xhtml"
+                   value="Edit"
+             propagation="none"
+                      id="commentEdit"
+                rendered="#{empty from}"
+                disabled="#{_comment.id != identity.id and not identity.hasRole(roleIDs.WRT_ADMIN_id)}">
+                <f:param name="commentId"
+                        value="#{_comment.id}"/>
+            </s:link>
+        </rich:column>
+    </rich:dataTable>
+
+    </div>
+    </rich:panel>
+
+    <div class="tableControl">
+
+        <s:link view="/CommentList.xhtml"
+            rendered="#{commentList.previousExists}"
+               value="#{messages.left}#{messages.left} First Page"
+                  id="firstPage">
+          <f:param name="firstResult" value="0"/>
+        </s:link>
+
+        <s:link view="/CommentList.xhtml"
+            rendered="#{commentList.previousExists}"
+               value="#{messages.left} Previous Page"
+                  id="previousPage">
+            <f:param name="firstResult"
+                    value="#{commentList.previousFirstResult}"/>
+        </s:link>
+
+        <s:link view="/CommentList.xhtml"
+            rendered="#{commentList.nextExists}"
+               value="Next Page #{messages.right}"
+                  id="nextPage">
+            <f:param name="firstResult"
+                    value="#{commentList.nextFirstResult}"/>
+        </s:link>
+
+        <s:link view="/CommentList.xhtml"
+            rendered="#{commentList.nextExists}"
+               value="Last Page #{messages.right}#{messages.right}"
+                  id="lastPage">
+            <f:param name="firstResult"
+                    value="#{commentList.lastFirstResult}"/>
+        </s:link>
+
+    </div>
+
+    <s:div styleClass="actionButtons" rendered="#{empty from}">
+        <s:button view="/CommentEdit.xhtml"
+                    id="create"
+           propagation="none"
+                 value="Create comment">
+            <f:param name="commentId"/>
+            <f:param name="usersId" value="#{identity.id}"/>
+            <f:param name="projectsId" value="#{activeProjectHome.definedInstance.id}"/>
+        </s:button>
+    </s:div>
+
+</ui:define>
+
+</ui:composition>

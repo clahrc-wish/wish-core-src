@@ -1,0 +1,414 @@
+<!--
+Copyright 2013 Imperial College London
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.org/schema/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="pdsa" styleClass="edit">
+
+        <rich:panel>
+            <f:facet name="header">#{pdsaHome.managed ? 'Edit' : 'Add'} PDSA cycle</f:facet>
+
+			<rich:panel style="border:none">
+				<h:graphicImage width="720" value="/img/PDSA.png" />
+			</rich:panel>
+
+			<rich:panel header="Cycle title" style="height:70px;width:400px;margin-right=10px" halign="left" valign="top">
+            	<h:inputTextarea id="cycleTitle"
+                	           cols="40"
+            	               rows="1"
+                              value="#{pdsaHome.instance.cycleTitle}">
+                	<a:ajax event="blur" render="cycleTitle" bypassUpdates="true" oncomplete="onAjaxRequestComplete()"/>
+                </h:inputTextarea>
+		    </rich:panel>
+
+		<h:panelGrid columns="2" id="gridPanel">
+
+			<rich:panel header="Plan" style="height:250px;width:400px;margin-right=10px" halign="left" valign="top">
+
+				<s:decorate id="descriptionField" template="layout/edit.xhtml">
+        	        <h:inputTextarea id="description"
+                	               cols="40"
+            	                   rows="10"
+                    	          value="#{pdsaHome.instance.description}">
+                		<a:ajax event="blur" render="descriptionField" bypassUpdates="true" oncomplete="onAjaxRequestComplete()"/>
+                		<f:validateLength maximum="5000"/>
+                	</h:inputTextarea>
+            	</s:decorate>
+			</rich:panel>
+			<h:panelGrid>
+				<rich:panel header="Plan team" style="height:121px;width:400px;margin-right=10px" halign="left" valign="top">
+	
+					<s:decorate id="planTeamField" template="layout/edit.xhtml">
+	                	<h:inputTextarea id="planTeam"
+	                    	           cols="40"
+	                        	       rows="1"
+	                            	  value="#{pdsaHome.instance.planTeam}">
+                			<a:ajax event="blur" render="planTeamField" bypassUpdates="true" oncomplete="onAjaxRequestComplete()"/>
+                		    <f:validateLength maximum="5000"/>
+                		</h:inputTextarea>
+	            	</s:decorate>
+				</rich:panel>
+				
+				<rich:panel header="Plan date" style="height:121px;width:400px" halign="left" valign="top">
+				
+		            <s:decorate id="eventDateField" template="layout/edit.xhtml">
+	        	        <rich:calendar id="eventDate"
+	            	           required="true" enableManualInput="true"
+	                	          value="#{pdsaHome.instance.eventDate}" datePattern="dd/MM/yy">
+                			<a:ajax event="change" render="eventDateField" bypassUpdates="true" oncomplete="onAjaxRequestComplete()"/>
+                		</rich:calendar>
+	            	</s:decorate>
+				</rich:panel>   
+			</h:panelGrid>
+			
+            <rich:panel header="Do" style="height:250px;width:400px" valign="top">
+            
+            	<s:decorate id="doDescriptionField" template="layout/edit.xhtml">
+                	<h:inputTextarea id="doDescription"
+                        	       cols="40"
+                    	           rows="10"
+                	              value="#{pdsaHome.instance.doDescription}">
+                		<a:ajax event="blur" render="doDescriptionField" bypassUpdates="true" oncomplete="onAjaxRequestComplete()"/>
+                		<f:validateLength maximum="5000"/>
+                	</h:inputTextarea>
+            	</s:decorate>
+            </rich:panel>
+            <h:panelGrid>
+	            <rich:panel header="Do team" style="height:121px;width:400px" valign="top">
+	            
+	            	<s:decorate id="doTeamField" template="layout/edit.xhtml">
+	                	<h:inputTextarea id="doTeam"
+	                    	           cols="40"
+	                        	       rows="1"
+	                            	  value="#{pdsaHome.instance.doTeam}">
+                			<a:ajax event="blur" render="doTeamField" bypassUpdates="true" oncomplete="onAjaxRequestComplete()"/>
+                		    <f:validateLength maximum="5000"/>
+                		</h:inputTextarea>
+	            	</s:decorate>
+				</rich:panel>     
+	
+				<rich:panel header="Do date" style="height:121px;width:400px" valign="top">
+				
+	            	<s:decorate id="doDateField" template="layout/edit.xhtml">
+	                	<rich:calendar id="doDate" enableManualInput="true"
+	                    	        value="#{pdsaHome.instance.doDate}" datePattern="dd/MM/yy">
+                			<a:ajax event="change" render="doDateField" bypassUpdates="true" oncomplete="onAjaxRequestComplete()"/>
+                		</rich:calendar>
+	            	</s:decorate>
+				</rich:panel>     
+			</h:panelGrid>
+			
+			<rich:panel  header="Study" style="height:250px;width:400px" valign="top">
+			
+            	<s:decorate id="studyDescriptionField" template="layout/edit.xhtml">
+                	<h:inputTextarea id="studyDescription"
+                    	           cols="40"
+                        	       rows="10"
+                            	  value="#{pdsaHome.instance.studyDescription}">
+                		<a:ajax event="blur" render="studyDescriptionField" bypassUpdates="true" oncomplete="onAjaxRequestComplete()"/>
+                		<f:validateLength maximum="5000"/>
+                	</h:inputTextarea>
+            	</s:decorate>
+            </rich:panel>
+			<h:panelGrid>
+				<rich:panel header="Study team" style="height:121px;width:400px" valign="top">
+				
+					<s:decorate id="studyTeamField" template="layout/edit.xhtml">
+	                	<h:inputTextarea id="studyTeam"
+	                    	           cols="40"
+	                        	       rows="1"
+	                	              value="#{pdsaHome.instance.studyTeam}">
+                			<a:ajax event="blur" render="studyTeamField" bypassUpdates="true" oncomplete="onAjaxRequestComplete()"/>
+                		    <f:validateLength maximum="5000"/>
+                		</h:inputTextarea>
+	            	</s:decorate>
+	            </rich:panel>
+	            
+	            <rich:panel header="Study date" style="height:121px;width:400px" valign="top">
+	            
+	            	<s:decorate id="studyDateField" template="layout/edit.xhtml">
+	                	<rich:calendar id="studyDate" enableManualInput="true"
+	                	            value="#{pdsaHome.instance.studyDate}" datePattern="dd/MM/yy">
+                			<a:ajax event="change" render="studyDateField" bypassUpdates="true" oncomplete="onAjaxRequestComplete()"/>
+                		</rich:calendar>
+	            	</s:decorate>
+	            </rich:panel>
+            </h:panelGrid>
+            
+            <rich:panel  header="Act" style="height:250px;width:400px" valign="top">
+            
+            	<s:decorate id="actDescriptionField" template="layout/edit.xhtml">
+                	<h:inputTextarea id="actDescription"
+                    	           cols="40"
+                        	       rows="10"
+                            	  value="#{pdsaHome.instance.actDescription}">
+                		<a:ajax event="blur" render="actDescriptionField" bypassUpdates="true" oncomplete="onAjaxRequestComplete()"/>
+                		<f:validateLength maximum="5000"/>
+                	</h:inputTextarea>
+            	</s:decorate>
+            </rich:panel>
+			<h:panelGrid>
+				<rich:panel  header="Act team" style="height:121px;width:400px" valign="top">
+				
+	            	<s:decorate id="actTeamField" template="layout/edit.xhtml">
+	                	<h:inputTextarea id="actTeam"
+	                    	           cols="40"
+	                        	       rows="1"
+	                            	  value="#{pdsaHome.instance.actTeam}">
+                			<a:ajax event="blur" render="actTeamField" bypassUpdates="true" oncomplete="onAjaxRequestComplete()"/>
+                		    <f:validateLength maximum="5000"/>
+                		</h:inputTextarea>
+	            	</s:decorate>
+	            </rich:panel>
+	
+				<rich:panel header="Act date" style="height:121px;width:400px" valign="top">
+				
+	            	<s:decorate id="actDateField" template="layout/edit.xhtml">
+	                	<rich:calendar id="actDate" enableManualInput="true"
+	                    	        value="#{pdsaHome.instance.actDate}" datePattern="dd/MM/yy">
+                			<a:ajax event="change" render="actDateField" bypassUpdates="true" oncomplete="onAjaxRequestComplete()"/>
+                		</rich:calendar>
+	            	</s:decorate>
+	            </rich:panel>
+            </h:panelGrid>
+            
+		</h:panelGrid>
+
+            <s:decorate id="rcTimestampField" template="layout/edit.xhtml" rendered="#{identity.hasRole(roleIDs.SUPER_ADMIN_id)}">
+                <ui:define name="label">Date Entry Made</ui:define>
+                <rich:calendar id="rcTimestamp" value="#{pdsaHome.instance.rcTimestamp}"
+                			   datePattern="dd/MM/yy hh:mm a"/>
+            </s:decorate>
+
+            <div style="clear:both">
+                <span class="required">*</span>
+                required fields
+            </div>
+
+        </rich:panel>
+
+        <div class="actionButtons">
+
+            <h:commandButton id="save"
+                          value="Save"
+                         action="#{pdsaHome.persist}"
+                       disabled="#{!pdsaHome.wired}"
+                       rendered="#{!pdsaHome.managed}">
+                <s:conversationId/>
+            </h:commandButton>
+			
+            <h:commandButton id="update"
+                          value="Update"
+                         action="#{pdsaHome.update}"
+                       rendered="#{pdsaHome.managed}">
+                <s:conversationId/>
+            </h:commandButton>
+
+            <a:commandButton id="delete"
+                          value="Delete"
+                     oncomplete="#{rich:component('confirmDeletePanel')}.show();"
+                      immediate="true"
+                       rendered="#{pdsaHome.managed}"
+                       disabled="#{not identity.hasRole(roleIDs.PROJECT_ADMIN_id)}"/>
+
+            <s:button id="cancelEdit"
+                   value="Cancel"
+             propagation="end"
+                    view="/Pdsa.xhtml"
+                rendered="#{pdsaHome.managed}"
+                  action="#{bijectionUtility.clearInstances()}"/>
+
+            <s:button id="cancelAdd"
+                   value="Cancel"
+             propagation="end"
+                    view="/#{empty pdsaFrom ? 'PdsaList' : pdsaFrom}.xhtml"
+                rendered="#{!pdsaHome.managed}"
+                  action="#{bijectionUtility.clearInstances('pdsaHome')}"/>
+
+        </div>
+        <rich:popupPanel modal="true" id="confirmDeletePanel" moveable="false" resizeable="false" height="135">
+		  <f:facet name="header">Confirm Record Deletion</f:facet> 
+		  <div class="actionButtons">
+		    <rich:panel style="align:center;">
+			  <h:outputText value="Are you sure you want to delete this ?" />
+			  <table width="100%">
+			    <tbody>
+				  <tr>
+				    <td align="center" width="50%">
+					  <a:commandButton type="submit" value="Yes" action="#{pdsaHome.remove}"
+					    oncomplete="#{rich:component('confirmDeletePanel')}.hide()"/>
+					</td>
+					<td align="center" width="50%">
+					  <a:commandButton type="submit" value="No" onclick="#{rich:component('confirmDeletePanel')}.hide()"/>
+					</td>
+				  </tr>
+			    </tbody>
+			  </table>
+		    </rich:panel>
+    	  </div> 
+		</rich:popupPanel>
+    </h:form>
+
+<rich:tabPanel rendered="#{identity.hasRole(roleIDs.SUPER_ADMIN_id)}" switchType="client" activeItem="projectsParentTab">
+
+    <rich:tab header="User *" labelClass="required">
+    <div class="association" id="usersParent">
+
+        <h:outputText value="There is no user associated with this pdsa."
+                   rendered="#{pdsaHome.instance.users == null}"/>
+
+        <rich:dataTable var="_users"
+                   value="#{pdsaHome.instance.users}"
+                rendered="#{pdsaHome.instance.users != null}"
+              rowClasses="rvgRowOne,rvgRowTwo"
+                      id="usersTable">
+            <h:column rendered="#{identity.hasRole(roleIDs.SUPER_ADMIN_id)}">
+                <f:facet name="header">Id</f:facet>
+                <h:outputText value="#{_users.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">First name</f:facet>
+                <h:outputText value="#{_users.firstName}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Last name</f:facet>
+                <h:outputText value="#{_users.lastName}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Registration date</f:facet>
+                <h:outputText value="#{_users.registrationDate}">
+                    <f:convertDateTime type="date" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Active</f:facet>
+                <h:outputText value="#{_users.active}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Login name</f:facet>
+                <h:outputText value="#{_users.loginName}"/>
+            </h:column>
+            <h:column rendered="false">
+                <f:facet name="header">Password</f:facet>
+                <h:outputText value="#{_users.password}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Email</f:facet>
+                <h:outputText value="#{_users.email}"/>
+            </h:column>
+        </rich:dataTable>
+
+        <div class="actionButtons">
+            <s:button id="#{pdsaHome.instance.users != null ? 'changeusersParent' : 'selectusersParent'}" value="#{pdsaHome.instance.users != null ? 'Change' : 'Select'} users"
+                       view="/UsersList.xhtml" disabled="#{not identity.hasRole(roleIDs.SUPER_ADMIN_id)}">
+                <f:param name="from" value="PdsaEdit"/>
+            </s:button>
+        </div>
+
+    </div>
+    </rich:tab>
+
+    <rich:tab header="Project *" labelClass="required" id="projectsParentTab">
+    <div class="association" id="projectsParent">
+
+        <h:outputText value="There is no project associated with this pdsa."
+                   rendered="#{pdsaHome.instance.projects == null}"/>
+
+        <rich:dataTable var="_projects"
+                   value="#{pdsaHome.instance.projects}"
+                rendered="#{pdsaHome.instance.projects != null}"
+              rowClasses="rvgRowOne,rvgRowTwo"
+                      id="projectsTable">
+            <h:column rendered="#{identity.hasRole(roleIDs.SUPER_ADMIN_id)}">
+                <f:facet name="header">Id</f:facet>
+                <h:outputText value="#{_projects.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Identifier</f:facet>
+                <h:outputText value="#{_projects.name}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Start date</f:facet>
+                <h:outputText value="#{_projects.startDate}">
+                    <f:convertDateTime type="date" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Implementation start date</f:facet>
+                <h:outputText value="#{_projects.implementationStartDate}">
+                    <f:convertDateTime type="date" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">End date</f:facet>
+                <h:outputText value="#{_projects.endDate}">
+                    <f:convertDateTime type="date" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Label</f:facet>
+                <h:outputText value="#{_projects.shortName}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Description</f:facet>
+                <h:outputText value="#{_projects.description}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Host organization</f:facet>
+                <h:outputText value="#{_projects.hostOrganization}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Site structure</f:facet>
+                <h:outputText value="#{_projects.siteStructure}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Type</f:facet>
+                <h:outputText value="#{_projects.type}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Active</f:facet>
+                <h:outputText value="#{_projects.active}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Grouping</f:facet>
+                <h:outputText value="#{_projects.projectGroupings.name}"/>
+            </h:column>
+        </rich:dataTable>
+
+        <div class="actionButtons">
+            <s:button id="#{pdsaHome.instance.projects != null ? 'changeprojectsParent' : 'selectprojectsParent'}" value="#{pdsaHome.instance.projects != null ? 'Change' : 'Select'} projects"
+                       view="/ProjectsList.xhtml" disabled="#{not identity.hasRole(roleIDs.SUPER_ADMIN_id)}">
+                <f:param name="from" value="PdsaEdit"/>
+            </s:button>
+        </div>
+
+    </div>
+    </rich:tab>
+</rich:tabPanel>
+
+</ui:define>
+
+</ui:composition>

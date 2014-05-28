@@ -1,0 +1,225 @@
+<!--
+Copyright 2013 Imperial College London
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.org/schema/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/home_template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="userProjectRolesAuditSearch" styleClass="edit">
+
+        <rich:collapsiblePanel headerClass="collapsiblePanelHeader" switchType="ajax" expanded="false">
+			<f:facet name="headerCollapsed">Project Roles Audit Search (click to expand)</f:facet>
+			<f:facet name="headerExpanded">Project Roles Audit Search (click to collapse)</f:facet>
+
+            <s:decorate template="layout/display.xhtml">
+                <ui:define name="label">Action</ui:define>
+                <h:inputText id="action" value="#{userProjectRolesAuditList.userProjectRolesAudit.action}"/>
+            </s:decorate>
+
+            <s:decorate template="layout/display.xhtml">
+                <ui:define name="label">Match</ui:define>
+                <h:selectOneRadio id="logic" value="#{userProjectRolesAuditList.restrictionLogicOperator}" styleClass="radio">
+                    <f:selectItem itemLabel="All" itemValue="and"/>
+                    <f:selectItem itemLabel="Any" itemValue="or"/>
+                </h:selectOneRadio>
+            </s:decorate>
+
+			<br />
+			<div>
+            	<h:commandButton id="search" value="Search" action="/UserProjectRolesAuditList.xhtml"/>
+            	<s:button id="reset" value="Reset" includePageParams="false"/>
+        	</div>
+			
+        </rich:collapsiblePanel>
+
+        
+    </h:form>
+
+    <rich:panel>
+        <f:facet name="header">Project Roles Audit Search Results (#{empty userProjectRolesAuditList.resultList ? 0 : (userProjectRolesAuditList.paginated ? userProjectRolesAuditList.resultCount : userProjectRolesAuditList.resultList.size)})</f:facet>
+    <div class="results" id="userProjectRolesAuditList">
+
+    <h:outputText value="The Project Roles Audit search returned no results."
+               rendered="#{empty userProjectRolesAuditList.resultList}"/>
+
+    <rich:dataTable id="userProjectRolesAuditList"
+                var="_userProjectRolesAudit"
+              value="#{userProjectRolesAuditList.resultList}"
+           rendered="#{not empty userProjectRolesAuditList.resultList}">
+        <h:column rendered="#{identity.hasRole(roleIDs.SUPER_ADMIN_id)}">
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{userProjectRolesAuditList}"/>
+                    <ui:param name="propertyLabel" value="Id"/>
+                    <ui:param name="propertyPath" value="userProjectRolesAudit.id"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_userProjectRolesAudit.id}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{userProjectRolesAuditList}"/>
+                    <ui:param name="propertyLabel" value="User"/>
+                    <ui:param name="propertyPath" value="userProjectRolesAudit.usersByUserId.loginName"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_userProjectRolesAudit.usersByUserId.loginName}" style="#{_userProjectRolesAudit.usersByUserId.id == identity.id ? 'background-color:lightgrey;' : ''}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{userProjectRolesAuditList}"/>
+                    <ui:param name="propertyLabel" value="Project"/>
+                    <ui:param name="propertyPath" value="userProjectRolesAudit.projects.shortName"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_userProjectRolesAudit.projects.shortName}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{userProjectRolesAuditList}"/>
+                    <ui:param name="propertyLabel" value="Role"/>
+                    <ui:param name="propertyPath" value="userProjectRolesAudit.roles.name"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_userProjectRolesAudit.roles.name}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{userProjectRolesAuditList}"/>
+                    <ui:param name="propertyLabel" value="Date Request Made"/>
+                    <ui:param name="propertyPath" value="userProjectRolesAudit.reqTimestamp"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_userProjectRolesAudit.reqTimestamp}">
+                <f:convertDateTime type="both" dateStyle="short"/>
+            </h:outputText>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{userProjectRolesAuditList}"/>
+                    <ui:param name="propertyLabel" value="Action"/>
+                    <ui:param name="propertyPath" value="userProjectRolesAudit.action"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_userProjectRolesAudit.action}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{userProjectRolesAuditList}"/>
+                    <ui:param name="propertyLabel" value="Date Action Done"/>
+                    <ui:param name="propertyPath" value="userProjectRolesAudit.resTimestamp"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_userProjectRolesAudit.resTimestamp}">
+                <f:convertDateTime type="both" dateStyle="short"/>
+            </h:outputText>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{userProjectRolesAuditList}"/>
+                    <ui:param name="propertyLabel" value="Admin"/>
+                    <ui:param name="propertyPath" value="userProjectRolesAudit.usersByAdminId.loginName"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_userProjectRolesAudit.usersByAdminId.loginName}" style="#{_userProjectRolesAudit.usersByAdminId.id == identity.id ? 'background-color:lightgrey;' : ''}"/>
+        </h:column>
+        <rich:column styleClass="action">
+            <f:facet name="header">Action</f:facet>
+            <s:link view="/#{empty from ? 'UserProjectRolesAudit' : from}.xhtml"
+                   value="#{empty from ? 'View' : 'Select'}"
+             propagation="#{empty from ? 'none' : 'default'}"
+                      id="userProjectRolesAuditViewId">
+                <f:param name="userProjectRolesAuditId"
+                        value="#{_userProjectRolesAudit.id}"/>
+            </s:link>
+            #{' '}
+            <s:link view="/UserProjectRolesAuditEdit.xhtml"
+                   value="Edit"
+             propagation="none"
+                      id="userProjectRolesAuditEdit"
+                rendered="#{empty from}"
+                disabled="true">
+                <f:param name="userProjectRolesAuditId"
+                        value="#{_userProjectRolesAudit.id}"/>
+            </s:link>
+        </rich:column>
+    </rich:dataTable>
+
+    </div>
+    </rich:panel>
+
+    <div class="tableControl">
+
+        <s:link view="/UserProjectRolesAuditList.xhtml"
+            rendered="#{userProjectRolesAuditList.previousExists}"
+               value="#{messages.left}#{messages.left} First Page"
+                  id="firstPage">
+          <f:param name="firstResult" value="0"/>
+        </s:link>
+
+        <s:link view="/UserProjectRolesAuditList.xhtml"
+            rendered="#{userProjectRolesAuditList.previousExists}"
+               value="#{messages.left} Previous Page"
+                  id="previousPage">
+            <f:param name="firstResult"
+                    value="#{userProjectRolesAuditList.previousFirstResult}"/>
+        </s:link>
+
+        <s:link view="/UserProjectRolesAuditList.xhtml"
+            rendered="#{userProjectRolesAuditList.nextExists}"
+               value="Next Page #{messages.right}"
+                  id="nextPage">
+            <f:param name="firstResult"
+                    value="#{userProjectRolesAuditList.nextFirstResult}"/>
+        </s:link>
+
+        <s:link view="/UserProjectRolesAuditList.xhtml"
+            rendered="#{userProjectRolesAuditList.nextExists}"
+               value="Last Page #{messages.right}#{messages.right}"
+                  id="lastPage">
+            <f:param name="firstResult"
+                    value="#{userProjectRolesAuditList.lastFirstResult}"/>
+        </s:link>
+
+    </div>
+
+    <s:div styleClass="actionButtons" rendered="#{empty from}">
+        <s:button view="/UserProjectRolesAuditEdit.xhtml"
+                    id="create"
+           propagation="none"
+                 value="Create userProjectRolesAudit"
+              disabled="true">
+            <f:param name="userProjectRolesAuditId"/>
+        </s:button>
+    </s:div>
+
+</ui:define>
+
+</ui:composition>

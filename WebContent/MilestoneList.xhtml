@@ -1,0 +1,240 @@
+<!--
+Copyright 2013 Imperial College London
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.org/schema/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/home_template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="milestoneSearch" styleClass="edit">
+
+        <rich:collapsiblePanel headerClass="collapsiblePanelHeader" switchType="ajax" expanded="false">
+			<f:facet name="headerCollapsed">Milestone Search (click to expand)</f:facet>
+			<f:facet name="headerExpanded">Milestone Search (click to collapse)</f:facet>
+
+            <s:decorate template="layout/display.xhtml">
+                <ui:define name="label">Label</ui:define>
+                <h:inputText id="label" value="#{milestoneList.milestone.label}"/>
+            </s:decorate>
+
+            <s:decorate template="layout/display.xhtml">
+                <ui:define name="label">Description</ui:define>
+                <h:inputText id="description" value="#{milestoneList.milestone.description}"/>
+            </s:decorate>
+
+            <s:decorate template="layout/display.xhtml">
+                <ui:define name="label">Milestone type</ui:define>
+                <h:inputText id="milestoneType" value="#{milestoneList.milestone.milestoneType}"/>
+            </s:decorate>
+
+            <s:decorate template="layout/display.xhtml">
+                <ui:define name="label">Match</ui:define>
+                <h:selectOneRadio id="logic" value="#{milestoneList.restrictionLogicOperator}" styleClass="radio">
+                    <f:selectItem itemLabel="All" itemValue="and"/>
+                    <f:selectItem itemLabel="Any" itemValue="or"/>
+                </h:selectOneRadio>
+            </s:decorate>
+
+	        <br />
+			<div>
+	            <h:commandButton id="search" value="Search" action="/MilestoneList.xhtml"/>
+	            <s:button id="reset" value="Reset" includePageParams="false"/>
+	        </div>
+
+        </rich:collapsiblePanel>
+
+    </h:form>
+
+	<s:div styleClass="actionButtons" rendered="#{empty from}">
+        <s:button view="/MilestoneEdit.xhtml"
+                    id="createDuplicate"
+           propagation="none"
+                 value="Create milestone">
+            <f:param name="milestoneId"/>
+        </s:button>
+    </s:div>
+    
+    <rich:panel>
+        <f:facet name="header">Milestone Search Results (#{empty milestoneList.resultList ? 0 : (milestoneList.paginated ? milestoneList.resultCount : milestoneList.resultList.size)})</f:facet>
+    <div class="results" id="milestoneList">
+
+    <h:outputText value="The Milestone recrod search returned no results."
+               rendered="#{empty milestoneList.resultList}"/>
+
+    <rich:dataTable id="milestoneList"
+                var="_milestone"
+              value="#{milestoneList.resultList}"
+           rendered="#{not empty milestoneList.resultList}">
+        <rich:column styleClass="action">
+            <f:facet name="header">Action</f:facet>
+            <s:link view="/#{empty from ? 'Milestone' : from}.xhtml"
+                   value="#{empty from ? 'View' : 'Select'}"
+             propagation="#{empty from ? 'none' : 'default'}"
+                      id="milestoneViewIdDuplicate">
+                <f:param name="milestoneId"
+                        value="#{_milestone.id}"/>
+            </s:link>
+            #{' '}
+            <s:link view="/MilestoneEdit.xhtml"
+                   value="Edit"
+             propagation="none"
+                      id="milestoneEditDuplicate"
+                rendered="#{empty from}">
+                <f:param name="milestoneId"
+                        value="#{_milestone.id}"/>
+            </s:link>
+        </rich:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{milestoneList}"/>
+                    <ui:param name="propertyLabel" value="Entry ID"/>
+                    <ui:param name="propertyPath" value="milestone.id"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_milestone.id}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{milestoneList}"/>
+                    <ui:param name="propertyLabel" value="Milestone date"/>
+                    <ui:param name="propertyPath" value="milestone.milestoneDate"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_milestone.milestoneDate}">
+                <f:convertDateTime type="date" dateStyle="short"/>
+            </h:outputText>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{milestoneList}"/>
+                    <ui:param name="propertyLabel" value="Label"/>
+                    <ui:param name="propertyPath" value="milestone.label"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_milestone.label}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{milestoneList}"/>
+                    <ui:param name="propertyLabel" value="Description"/>
+                    <ui:param name="propertyPath" value="milestone.description"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_milestone.description}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{milestoneList}"/>
+                    <ui:param name="propertyLabel" value="Milestone type"/>
+                    <ui:param name="propertyPath" value="milestone.milestoneType"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_milestone.milestoneType}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{milestoneList}"/>
+                    <ui:param name="propertyLabel" value="Date Entry Made"/>
+                    <ui:param name="propertyPath" value="milestone.rcTimestamp"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_milestone.rcTimestamp}">
+                <f:convertDateTime type="both" dateStyle="short"/>
+            </h:outputText>
+        </h:column>
+        <rich:column styleClass="action">
+            <f:facet name="header">Action</f:facet>
+            <s:link view="/#{empty from ? 'Milestone' : from}.xhtml"
+                   value="#{empty from ? 'View' : 'Select'}"
+             propagation="#{empty from ? 'none' : 'default'}"
+                      id="milestoneViewId">
+                <f:param name="milestoneId"
+                        value="#{_milestone.id}"/>
+            </s:link>
+            #{' '}
+            <s:link view="/MilestoneEdit.xhtml"
+                   value="Edit"
+             propagation="none"
+                      id="milestoneEdit"
+                rendered="#{empty from}">
+                <f:param name="milestoneId"
+                        value="#{_milestone.id}"/>
+            </s:link>
+        </rich:column>
+    </rich:dataTable>
+
+    </div>
+    </rich:panel>
+
+    <div class="tableControl">
+
+        <s:link view="/MilestoneList.xhtml"
+            rendered="#{milestoneList.previousExists}"
+               value="#{messages.left}#{messages.left} First Page"
+                  id="firstPage">
+          <f:param name="firstResult" value="0"/>
+        </s:link>
+
+        <s:link view="/MilestoneList.xhtml"
+            rendered="#{milestoneList.previousExists}"
+               value="#{messages.left} Previous Page"
+                  id="previousPage">
+            <f:param name="firstResult"
+                    value="#{milestoneList.previousFirstResult}"/>
+        </s:link>
+
+        <s:link view="/MilestoneList.xhtml"
+            rendered="#{milestoneList.nextExists}"
+               value="Next Page #{messages.right}"
+                  id="nextPage">
+            <f:param name="firstResult"
+                    value="#{milestoneList.nextFirstResult}"/>
+        </s:link>
+
+        <s:link view="/MilestoneList.xhtml"
+            rendered="#{milestoneList.nextExists}"
+               value="Last Page #{messages.right}#{messages.right}"
+                  id="lastPage">
+            <f:param name="firstResult"
+                    value="#{milestoneList.lastFirstResult}"/>
+        </s:link>
+
+    </div>
+
+    <s:div styleClass="actionButtons" rendered="#{empty from}">
+        <s:button view="/MilestoneEdit.xhtml"
+                    id="create"
+           propagation="none"
+                 value="Create milestone">
+            <f:param name="milestoneId"/>
+        </s:button>
+    </s:div>
+
+</ui:define>
+
+</ui:composition>

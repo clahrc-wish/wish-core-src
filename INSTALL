@@ -1,0 +1,65 @@
+CLAHRC WISH is a web application built and run with JBoss SEAM framework.
+The installation instructions assume the following environment:
+Ubuntu 13.04
+MySQL 5.6
+JBoss AS 7.1.1.Final
+Java 1.6
+Apache ANT 1.8
+Git 1.8
+
+
+1. Download source distribution into a WISH_DISTRO directory from GitHub.
+	# git clone https://github.com/clahrc-wish/wish-core-src.git
+
+2. Create WISH core database.
+   2.1 If not done so, download and install MySQL DB server into a MYSQL_HOME directory.
+   2.2 Using MySQL admin account run:
+		# ${MYSQL_HOME}/bin/mysql -u root -p < ${WISH_DISTRO}/resources/sql/clahrc2_core.sql
+
+3. Configure JBoss AS.
+   3.1 If not done so, download and install JBoss AS into a JBOSS_HOME directory.
+   3.2 Create a new 'module' directory to hold MySQL connector used at runtime by WISH:
+		# mkdir ${JBOSS_HOME}/modules/com/mysql
+		# mkdir ${JBOSS_HOME}/modules/com/mysql/main	
+	
+	3.3 Copy into this new 'main' module subdirectory all files found in
+	    '${WISH_DISTRO}/resources/jboss/modules/mysql'.
+	    
+	3.4 Create a new 'module' directory to hold WISH runtime configuration files.
+		# mkdir ${JBOSS_HOME}/modules/uk
+		# mkdir ${JBOSS_HOME}/modules/uk/ac
+		# mkdir ${JBOSS_HOME}/modules/uk/ac/ic
+		# mkdir ${JBOSS_HOME}/modules/uk/ac/ic/clahrc
+		# mkdir ${JBOSS_HOME}/modules/uk/ac/ic/clahrc/resources
+		# mkdir ${JBOSS_HOME}/modules/uk/ac/ic/clahrc/resources/main
+	
+	3.5 Copy into this new 'main' module subdirectory all files found in
+	    '${WISH_DISTRO}/resources/jboss/modules/wish'.
+		    
+    Make sure the newly created 'module' direcotry and file permissions are correctly set for 
+	the account used to run the JBoss AS instance.
+	 
+	3.6 Edit the JBoss AS standalone configuration file - '${JBOSS_HOME}/standalone/configuration/standalone.xml'
+        In the section '<datasources>' add a new '<datasource>'. 
+        Copy into it the '<datasource>' content from '${WISH_DISTRO}/resources/jboss/configuration/standalone.xml'
+        In the section '<drivers>' add a new '<driver>'. 
+        Copy into it the '<driver>' content from '${WISH_DISTRO}/resources/jboss/configuration/standalone.xml'
+       
+	3.7 If not done so, configure the JBoss AS launch script. An example script for Ubuntu 13.04 is included in
+	    '${WISH_DISTRO}/resources/jboss/configuration/jboss-as'.
+	    The file requires two configuration files in '/etc/java' and '/etc/jboss-as' directories, create if necessery.
+	    Copy to these directories the example configuration files found in '${WISH_DISTRO}/resources/jboss/configuration/java.conf'
+	    and '${WISH_DISTRO}/resources/jboss/configuration/jboss-as.conf' respectively - if needed, modify them to match the new environment.
+	    
+4. Build WISH WAR archive.
+   4.1 Edit the '${WISH_DISTRO}/build.xml' file and make sure that:
+      4.1.1 the value of the 'property name="project.name"' is whatever you want to name your archive file - default is - 'value="clahrc2-core-jb7"'
+      4.1.2 the value of the 'property name="jboss.home.dir" points to the directory where Jboss AS is installed - default is - 'value="../../jboss-as-7.1.1.Final"'
+   
+   4.2 Using the Apache ANT, execute the targets for building and archiving.
+   		# cp ${WISH_DISTRO}
+   		# ${APACHE_ANT}/bin/ant clean archive
+   If successful, this will result in a generated '${project.name}.war' file.
+   
+5. Deploy the WISH WAR onto the JBoss AS instance - i.e. copy the '${project.name}.war' generated in (4.) to the '${JBOSS_HOME}/standalone/deployments/' directory.
+   To access the WISH login page - open a browser and go to 'http://<JBossAS URL>/wish'. 

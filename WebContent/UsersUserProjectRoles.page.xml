@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2013 Imperial College London
+  
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+    http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<page xmlns="http://jboss.org/schema/seam/pages"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://jboss.org/schema/seam/pages http://jboss.org/schema/seam/pages-2.3.xsd"
+      login-required="true">
+
+   <restrict>#{identity.hasRole(roleIDs.PROJECT_VIEWER_id) and (not empty identityHome.definedInstance)}</restrict>
+   
+   <param name="usersUserProjectRolesFrom"/>
+   <param name="usersUserProjectRolesId" value="#{usersUserProjectRolesHome.usersUserProjectRolesId.id}"/>
+   <param name="usersUserProjectRolesFirstName" value="#{usersUserProjectRolesHome.usersUserProjectRolesId.firstName}"/>
+   <param name="usersUserProjectRolesLastName" value="#{usersUserProjectRolesHome.usersUserProjectRolesId.lastName}"/>
+   <param name="usersUserProjectRolesRegistrationDate" value="#{usersUserProjectRolesHome.usersUserProjectRolesId.registrationDate}"/>
+   <param name="usersUserProjectRolesActive" value="#{usersUserProjectRolesHome.usersUserProjectRolesId.active}"/>
+   <param name="usersUserProjectRolesLoginName" value="#{usersUserProjectRolesHome.usersUserProjectRolesId.loginName}"/>
+   <param name="usersUserProjectRolesPassword" value="#{usersUserProjectRolesHome.usersUserProjectRolesId.password}"/>
+   <param name="usersUserProjectRolesEmail" value="#{usersUserProjectRolesHome.usersUserProjectRolesId.email}"/>
+   <param name="usersUserProjectRolesUserId" value="#{usersUserProjectRolesHome.usersUserProjectRolesId.userId}"/>
+   <param name="usersUserProjectRolesProjectId" value="#{usersUserProjectRolesHome.usersUserProjectRolesId.projectId}"/>
+   <param name="usersUserProjectRolesRoleId" value="#{usersUserProjectRolesHome.usersUserProjectRolesId.roleId}"/>
+
+	<navigation>
+	  <rule if-outcome="home">
+	    <redirect view-id="/home.xhtml"/>
+	  </rule>
+	</navigation>
+	<navigation from-action="#{identity.logout}">
+	  <end-conversation/>
+	  <redirect url="#{basePath}"/>
+	</navigation>
+
+</page>

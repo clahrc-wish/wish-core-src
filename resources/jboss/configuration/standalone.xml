@@ -1,0 +1,17 @@
+<datasources>
+	. . .
+	<datasource jndi-name="java:jboss/datasources/ClahrcDS" pool-name="ClahrcDS" enabled="true" use-java-context="true">
+    	<connection-url>jdbc:mysql://localhost:3306/clahrc2</connection-url>
+        <driver>mysql-server-module</driver>
+        <security>
+        	<user-name>clahrc</user-name>
+            <password>clahrc</password>
+        </security>
+	</datasource>	
+	. . .
+	<drivers>
+		. . .
+		<driver name="mysql-server-module" module="com.mysql"/>
+		. . .
+	</drivers>
+</datasources>

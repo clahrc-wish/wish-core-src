@@ -1,0 +1,338 @@
+<!--
+Copyright 2013 Imperial College London
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.org/schema/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/home_template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="createUserForm" styleClass="edit">
+    
+        <rich:panel style="width: 100%;">
+            <f:facet name="header">#{usersHome.managed ? 'Edit' : 'Add'} User account</f:facet>
+
+
+			<h:outputText value="NOTE to Administrators: Please make sure the user, you are about to create an account for, does Not already have one !" 
+			              style="color: red;">
+			</h:outputText>
+            <s:decorate id="firstNameField" template="layout/edit.xhtml">
+                <ui:define name="label">First name</ui:define>
+                <h:inputText id="firstName"
+                       required="true"
+                           size="45"
+                      maxlength="45"
+                          value="#{usersHome.instance.firstName}"
+                      validator="#{userNameValidator.validate}">
+                    <a:ajax event="change" render="firstNameField" bypassUpdates="true" oncomplete="onAjaxRequestComplete()"/>
+                    <a:ajax event="blur" render="loginNameField" bypassUpdates="true" oncomplete="javascript:setLoginName(1)"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="lastNameField" template="layout/edit.xhtml">
+                <ui:define name="label">Last name</ui:define>
+                <h:inputText id="lastName"
+                       required="true"
+                           size="45"
+                      maxlength="45"
+                          value="#{usersHome.instance.lastName}"
+                      validator="#{userNameValidator.validate}">
+                    <a:ajax event="change" render="lastNameField" bypassUpdates="true" oncomplete="onAjaxRequestComplete()"/>
+                    <a:ajax event="blur" render="loginNameField" bypassUpdates="true" oncomplete="javascript:setLoginName(2)"/>
+                </h:inputText>
+            </s:decorate>
+
+			<s:decorate id="lookUpNameField" template="layout/edit.xhtml">
+				<ui:define name="label"></ui:define>
+                <a:commandLink id="lookUpName" value="Look up name"
+                        oncomplete="#{rich:component('lookUpNamePanel')}.show()">
+                </a:commandLink>
+			</s:decorate>
+			
+        
+            <s:decorate id="registrationDateField" template="layout/edit.xhtml">
+                <ui:define name="label">Registration date</ui:define>
+                <rich:calendar id="registrationDate"
+                         required="true"
+                enableManualInput="true"
+                            value="#{usersHome.instance.registrationDate}" datePattern="dd/MM/yy"
+                        validator="#{registrationDateValidator.validate}"/>
+            </s:decorate>
+
+
+            <s:decorate id="activeField" template="layout/edit.xhtml">
+                <ui:define name="label">Active</ui:define>
+                <h:selectBooleanCheckbox id="active"
+                                   required="true"
+                                      value="#{usersHome.instance.active}"/>
+            </s:decorate>
+			
+
+            <s:decorate id="loginNameField" template="layout/edit.xhtml">
+                <ui:define name="label">Login name</ui:define>
+                <h:inputText id="loginName"
+                       required="true"
+                           size="45"
+                      maxlength="45"
+                          value="#{usersHome.instance.loginName}"
+                      validator="#{loginNameValidator.validate}"
+            		   disabled="true">
+                    <a:ajax event="change" render="loginNameField" bypassUpdates="true" oncomplete="onAjaxRequestComplete()"/>
+                    
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="passwordField" template="layout/edit.xhtml">
+                <ui:define name="label">Password</ui:define>
+                <h:inputSecret id="password"
+                       required="true"
+                           size="45"
+                      maxlength="45"
+                      redisplay="true"
+                          value="#{usersHome.instance.password}">
+                    <a:ajax event="change" render="passwordField" bypassUpdates="true" oncomplete="onAjaxRequestComplete()"/>
+                </h:inputSecret>
+                <h:outputLabel for="checkBox" >generate random</h:outputLabel>
+				<h:selectBooleanCheckbox id="checkBox" title="click to select" onclick="javascript:setRandomPass()">
+					<f:attribute name="state" value="false" />
+					<s:remote include="randomStringGenerator" />
+					<script type="text/javascript">
+						function setRandomPass() {
+							try {
+								if (document.getElementById("createUserForm:passwordField:checkBox").state) {
+									document.getElementById("createUserForm:passwordField:password").value = '';
+									document.getElementById("createUserForm:passwordField:checkBox").state = false;
+									
+								} else {
+									Seam.Component.newInstance("randomStringGenerator").generate( function callback(RandomString) {
+										document.getElementById("createUserForm:passwordField:password").value = RandomString;
+										document.getElementById("createUserForm:passwordField:checkBox").state = true;
+										} )
+								}
+							} catch ( e ) {
+								alert("JS setRandomPass() Error: " + e.message );
+							}
+						}
+					</script>
+				</h:selectBooleanCheckbox>
+            </s:decorate>
+
+
+            <s:decorate id="emailField" template="layout/edit.xhtml">
+                <ui:define name="label">Email</ui:define>
+                <h:inputText id="email"
+                       required="true"
+                           size="45"
+                      maxlength="45"
+                          value="#{usersHome.instance.email}"
+                      validator="#{emailValidator.validate}">
+                    <a:ajax event="change" render="emailField" bypassUpdates="true" oncomplete="onAjaxRequestComplete()"/>
+                </h:inputText>
+            </s:decorate>
+            
+            <h:panelGrid id="projectRoleGridPanel" columns="3"  style="border:solid; display:inline-block; width: 925px;">
+            
+            	<rich:panel id="projectRoleFieldsPanel" style="border:none">
+            		<s:decorate id="projectField" template="layout/edit1.xhtml">
+            			<ui:define name="label">Project</ui:define>
+		                <h:selectOneMenu id="project" value="#{userProjectRolesHome.instance.id.projectId}" required="true" style="width: 260px;font-size: 11px;"
+		                                 valueChangeListener="#{userProjectRolesUtility.pushSelectedProjectId}">
+		           			<f:selectItems value="#{projectsList.nameIdList}" itemLabelEscaped="Click to select..."/>
+		           			<a:ajax event="change" render="projectField" bypassUpdates="true" oncomplete="onAjaxRequestComplete()"/>
+		                </h:selectOneMenu>
+		            </s:decorate>
+		            
+		             <s:decorate id="roleField" template="layout/edit1.xhtml">
+		             	<ui:define name="label">Role</ui:define>
+		                <h:selectOneMenu id="role" value="#{userProjectRolesHome.instance.roles}" required="true" style="width: 260px;font-size: 11px;"
+		                                 valueChangeListener="#{userProjectRolesUtility.pushSelectedRole}" converter="rolesConverter">
+		           			<f:selectItems value="#{rolesList.nameObjectList}" itemLabelEscaped="Click to select..."/>
+		           			<a:ajax event="change" render="roleField" bypassUpdates="true" oncomplete="onAjaxRequestComplete()"/>
+		                </h:selectOneMenu>
+		            </s:decorate>
+            	</rich:panel>
+            	
+            	<rich:panel id="addRemoveButtonsPanel" style="border:none">
+            		<a:commandButton type="button" value="Add-&gt;" immediate="true" style="width: 65px;"
+            		                 action="#{userProjectRolesUtility.addProjectRoleSelection()}">
+            			<a:ajax render="projectRoleSelection" oncomplete="onAjaxRequestComplete()"/>
+            		</a:commandButton>
+            		<br />
+            		<a:commandButton type="button" value="&lt;-Remove" immediate="true" style="width: 65px;"
+            		                 action="#{userProjectRolesUtility.removeProjectRoleSelection()}">
+            			<a:ajax render="projectRoleSelection" oncomplete="onAjaxRequestComplete()"/>
+            		</a:commandButton>
+            	</rich:panel>
+            	
+            	<rich:panel id="projectRoleSelectionPanel" style="border:none">
+            		<h:selectOneListbox id="projectRoleSelection" value="" disabled="true" 
+            		                    style="width:400px; font-size:11px;">
+            			<f:selectItems value="#{userProjectRolesUtility.selectedProjectRoles}"></f:selectItems>
+            		</h:selectOneListbox>
+            	</rich:panel>
+            	
+            </h:panelGrid>
+
+            <div style="clear:both">
+                <span class="required">*</span>
+                required fields
+            </div>
+            <script type="text/javascript">
+				function setLoginName( nameField ) {
+					try {
+						var FirstName = document.getElementById("createUserForm:firstNameField:firstName").value;
+						if ( FirstName === null ) {
+							FirstName = '';
+						} else {
+							FirstName = FirstName.toLowerCase().replace(/\s/g, "");
+						}
+						var LastName = document.getElementById("createUserForm:lastNameField:lastName").value;
+						if ( LastName === null ) {
+							LastName = '';
+						} else {
+							LastName = LastName.toLowerCase().replace(/\s/g, "");
+						}
+						document.getElementById("createUserForm:loginNameField:loginName").value = (FirstName + "." + LastName);
+								
+						//enable the LookUp button
+						if ( (FirstName === '') || (LastName === '') ) {
+							document.getElementById("createUserForm:lookUpNameField:lookUpName").disabled = true;
+						} else {
+							document.getElementById("createUserForm:lookUpNameField:lookUpName").disabled = false;
+						}
+					} catch ( e ) {
+						alert("JS setLoginName() Error: " + e.message );
+					}
+				}
+			</script>
+        </rich:panel>
+
+        <div class="actionButtons">
+
+            <h:commandButton id="save"
+                          value="Save"
+                         action="#{userProjectRolesHome.persistForNewUser}"
+                       disabled="#{!usersHome.wired}"
+                       rendered="#{!usersHome.managed}">
+                <s:conversationId/>
+            </h:commandButton>
+
+            <s:button id="cancelAdd"
+                   value="Cancel"
+             propagation="end"
+                    view="/#{empty usersFrom ? 'UsersList' : usersFrom}.xhtml"
+                rendered="#{!usersHome.managed}"
+                  action="#{bijectionUtility.clearInstances('usersHome')}"/>
+
+        </div>
+        <rich:popupPanel modal="true" id="confirmCreatePanel" moveable="false" resizeable="false" height="150">
+		  <f:facet name="header">Confirm Account Creation</f:facet> 
+		  <div class="actionButtons">
+		    <rich:panel style="align:center;">
+			  <h:outputText value="Are you sure you want to create this new user account ?" />
+			  <table width="100%">
+			    <tbody>
+				  <tr>
+				    <td align="center" width="50%">
+					  <a:commandButton type="submit" value="Yes" action="#{userProjectRolesHome.persistForNewUser}"
+					    oncomplete="#{rich:component('confirmCreatePanel')}.hide()"/>
+					</td>
+					<td align="center" width="50%">
+					  <a:commandButton type="submit" value="No" onclick="#{rich:component('confirmCreatePanel')}.hide()"/>
+					</td>
+				  </tr>
+			    </tbody>
+			  </table>
+		    </rich:panel>
+    	  </div> 
+		</rich:popupPanel>
+		<rich:popupPanel modal="true" id="lookUpNamePanel" moveable="false" resizeable="true" 
+		                 width="410" minWidth="410" maxWidth="710" height="130" minHeight="130">
+			<a:ajax event="show" render="lookUPNameResultsPanel" />
+            <f:facet name="header">Name Look Up</f:facet> 
+		    <div id="lookUpNamePanelDiv">
+				<rich:panel style="align:center;" id="lookUPNameResultsPanel">
+				    <div class="results" id="usersList">
+						<h:outputText value="The name look up returned no results."
+					               rendered="#{empty usersList.lookUp(param['createUserForm:firstNameField:firstName'],param['createUserForm:lastNameField:lastName'])}"/>
+					    <rich:dataTable id="usersListTable"
+					                var="_users"
+					              value="#{usersList.lookUp(param['createUserForm:firstNameField:firstName'],param['createUserForm:lastNameField:lastName'])}"
+					           rendered="#{not empty usersList.lookUp(param['createUserForm:firstNameField:firstName'],param['createUserForm:lastNameField:lastName'])}"
+								   rows="5">
+					        <h:column>
+					            <f:facet name="header">
+					                <ui:include src="layout/sort.xhtml">
+					                    <ui:param name="entityList" value="#{usersList}"/>
+					                    <ui:param name="propertyLabel" value="First name"/>
+					                    <ui:param name="propertyPath" value="users.firstName"/>
+					                </ui:include>
+					            </f:facet>
+					            <h:outputText value="#{_users.firstName}"/>
+					        </h:column>
+					        <h:column>
+					            <f:facet name="header">
+					                <ui:include src="layout/sort.xhtml">
+					                    <ui:param name="entityList" value="#{usersList}"/>
+					                    <ui:param name="propertyLabel" value="Last name"/>
+					                    <ui:param name="propertyPath" value="users.lastName"/>
+					                </ui:include>
+					            </f:facet>
+					            <h:outputText value="#{_users.lastName}"/>
+					        </h:column>
+					        <h:column>
+					            <f:facet name="header">
+					                <ui:include src="layout/sort.xhtml">
+					                    <ui:param name="entityList" value="#{usersList}"/>
+					                    <ui:param name="propertyLabel" value="Email"/>
+					                    <ui:param name="propertyPath" value="users.email"/>
+					                </ui:include>
+					            </f:facet>
+					            <h:outputText value="#{_users.email}"/>
+					        </h:column>
+					        <rich:column styleClass="action">
+					            <f:facet name="header">Action</f:facet>
+					            <s:link view="/UsersEdit.xhtml"
+					                   value="Edit"
+					             propagation="none"
+					                      id="usersEdit"
+					                rendered="#{empty from}"
+					                disabled="#{(_users.id != identity.id) and not identity.hasRole(roleIDs.PROJECT_ADMIN_id)}">
+					                <f:param name="usersId" value="#{_users.id}"/>
+					            </s:link>
+					        </rich:column>
+					    </rich:dataTable>
+					    <rich:dataScroller for="usersListTable" renderIfSinglePage="false"></rich:dataScroller>
+					</div>
+				</rich:panel>
+			</div>
+			<div class="actionButtons">
+				<a:commandButton type="submit" value="Close" onclick="#{rich:component('lookUpNamePanel')}.hide()"/>
+		    </div> 
+		</rich:popupPanel>
+    </h:form>
+
+</ui:define>
+
+</ui:composition>

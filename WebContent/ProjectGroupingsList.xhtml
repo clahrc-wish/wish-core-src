@@ -1,0 +1,174 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.org/schema/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/home_template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="projectGroupingsSearch" styleClass="edit">
+
+        <rich:collapsiblePanel headerClass="collapsiblePanelHeader" switchType="ajax" expanded="false"
+                               rendered="#{identity.hasRole(roleIDs.WRT_ADMIN_id)}">
+			<f:facet name="headerCollapsed">Project groupings Search (click to expand)</f:facet>
+			<f:facet name="headerExpanded">Project groupings Search (click to collapse)</f:facet>
+
+            <s:decorate template="layout/display.xhtml">
+                <ui:define name="label">Name</ui:define>
+                <h:inputText id="name" value="#{projectGroupingsList.projectGroupings.name}"/>
+            </s:decorate>
+
+            <s:decorate template="layout/display.xhtml">
+                <ui:define name="label">Description</ui:define>
+                <h:inputText id="description" value="#{projectGroupingsList.projectGroupings.description}"/>
+            </s:decorate>
+
+            <s:decorate template="layout/display.xhtml">
+                <ui:define name="label">Theme</ui:define>
+                <h:inputText id="theme" value="#{projectGroupingsList.projectGroupings.theme}"/>
+            </s:decorate>
+
+            <s:decorate template="layout/display.xhtml">
+                <ui:define name="label">Match</ui:define>
+                <h:selectOneRadio id="logic" value="#{projectGroupingsList.restrictionLogicOperator}" styleClass="radio">
+                    <f:selectItem itemLabel="ALL fields" itemValue="and" itemDisabled="#{not identity.hasRole(roleIDs.WRT_ADMIN_id)}"/>
+                    <f:selectItem itemLabel="ANY field" itemValue="or"/>
+                </h:selectOneRadio>
+            </s:decorate>
+
+        </rich:collapsiblePanel>
+
+        <div class="actionButtons">
+            <h:commandButton id="search" value="Search" action="/ProjectGroupingsList.xhtml"/>
+            <s:button id="reset" value="Reset" includePageParams="false"/>
+        </div>
+
+    </h:form>
+
+    <rich:panel>
+        <f:facet name="header">Project Groupings Search Results (#{empty projectGroupingsList.resultList ? 0 : (projectGroupingsList.paginated ? projectGroupingsList.resultCount : projectGroupingsList.resultList.size)})</f:facet>
+    <div class="results" id="projectGroupingsList">
+
+    <h:outputText value="The project groupings search returned no results."
+               rendered="#{empty projectGroupingsList.resultList}"/>
+
+    <rich:dataTable id="projectGroupingsList"
+                var="_projectGroupings"
+              value="#{projectGroupingsList.resultList}"
+           rendered="#{not empty projectGroupingsList.resultList}">
+        <h:column rendered="#{identity.hasRole(roleIDs.SUPER_ADMIN_id)}">
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{projectGroupingsList}"/>
+                    <ui:param name="propertyLabel" value="Id"/>
+                    <ui:param name="propertyPath" value="projectGroupings.id"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_projectGroupings.id}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{projectGroupingsList}"/>
+                    <ui:param name="propertyLabel" value="Name"/>
+                    <ui:param name="propertyPath" value="projectGroupings.name"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_projectGroupings.name}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{projectGroupingsList}"/>
+                    <ui:param name="propertyLabel" value="Description"/>
+                    <ui:param name="propertyPath" value="projectGroupings.description"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_projectGroupings.description}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{projectGroupingsList}"/>
+                    <ui:param name="propertyLabel" value="Theme"/>
+                    <ui:param name="propertyPath" value="projectGroupings.theme"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_projectGroupings.theme}"/>
+        </h:column>
+        <rich:column styleClass="action">
+            <f:facet name="header">Action</f:facet>
+            <s:link view="/#{empty from ? 'ProjectGroupings' : from}.xhtml"
+                   value="#{empty from ? 'View' : 'Select'}"
+             propagation="#{empty from ? 'none' : 'default'}"
+                      id="projectGroupingsViewId">
+                <f:param name="projectGroupingsId"
+                        value="#{_projectGroupings.id}"/>
+            </s:link>
+            #{' '}
+            <s:link view="/ProjectGroupingsEdit.xhtml"
+                   value="Edit"
+             propagation="none"
+                      id="projectGroupingsEdit"
+                rendered="#{empty from}"
+                disabled="#{not identity.hasRole(roleIDs.WRT_ADMIN_id)}">
+                <f:param name="projectGroupingsId"
+                        value="#{_projectGroupings.id}"/>
+            </s:link>
+        </rich:column>
+    </rich:dataTable>
+
+    </div>
+    </rich:panel>
+
+    <div class="tableControl">
+
+        <s:link view="/ProjectGroupingsList.xhtml"
+            rendered="#{projectGroupingsList.previousExists}"
+               value="#{messages.left}#{messages.left} First Page"
+                  id="firstPage">
+          <f:param name="firstResult" value="0"/>
+        </s:link>
+
+        <s:link view="/ProjectGroupingsList.xhtml"
+            rendered="#{projectGroupingsList.previousExists}"
+               value="#{messages.left} Previous Page"
+                  id="previousPage">
+            <f:param name="firstResult"
+                    value="#{projectGroupingsList.previousFirstResult}"/>
+        </s:link>
+
+        <s:link view="/ProjectGroupingsList.xhtml"
+            rendered="#{projectGroupingsList.nextExists}"
+               value="Next Page #{messages.right}"
+                  id="nextPage">
+            <f:param name="firstResult"
+                    value="#{projectGroupingsList.nextFirstResult}"/>
+        </s:link>
+
+        <s:link view="/ProjectGroupingsList.xhtml"
+            rendered="#{projectGroupingsList.nextExists}"
+               value="Last Page #{messages.right}#{messages.right}"
+                  id="lastPage">
+            <f:param name="firstResult"
+                    value="#{projectGroupingsList.lastFirstResult}"/>
+        </s:link>
+
+    </div>
+
+    <s:div styleClass="actionButtons" rendered="#{empty from}">
+        <s:button view="/ProjectGroupingsEdit.xhtml"
+                    id="create"
+           propagation="none"
+                 value="Create project grouping">
+            <f:param name="projectGroupingsId"/>
+        </s:button>
+    </s:div>
+
+</ui:define>
+
+</ui:composition>

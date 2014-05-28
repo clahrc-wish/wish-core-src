@@ -1,0 +1,195 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!--
+Copyright 2013 Imperial College London
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+   xmlns:ui="http://java.sun.com/jsf/facelets"
+   xmlns:f="http://java.sun.com/jsf/core"
+   xmlns:h="http://java.sun.com/jsf/html"
+   xmlns:a="http://richfaces.org/a4j"
+   xmlns:s="http://jboss.org/schema/seam/taglib"
+   xmlns:rich="http://richfaces.org/rich"
+   contentType="text/html">
+<html>
+   <h:head>
+      <meta http-equiv="x-ua-compatible" content="IE=9; charset=UTF-8"/>
+      <title>#{installationName}</title>
+      <link rel="shortcut icon" href="#{request.contextPath}/favicon.ico"/>
+      <h:outputScript name="jquery.js"/>
+      <ui:insert name="head"/>
+      
+	  <script type="text/javascript">
+ 
+		  var _gaq = _gaq || [];
+		  _gaq.push(['_setAccount', 'UA-29620439-1']);
+		  _gaq.push(['_trackPageview']);
+		 
+		  (function() {
+		    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		  })();
+		 
+	  </script>
+   </h:head>
+   <h:body onload="startSessionTimeoutCheck();">
+		<s:remote include="httpSessionChecker" />
+		<script type="text/javascript">
+			var sessionChecker = Seam.Component.getInstance( "httpSessionChecker" );
+			var timeoutMillis = '#{sessionTimeoutSeconds}'*1000+3000;
+			var sessionTimeoutInterval = null;
+			var displayTimeout = null;
+			var displayFormatMS = "%%M%%:%%S%%";
+			var displayFormatHMS = "%%H%%:%%M%%:%%S%%";
+
+			jQuery(document).ready(function() {
+
+				// Menu off-text click hack Start
+				// Reset the click function to the links parent components - So the links work even when mouse pointer is off the text 
+				var anchors = jQuery('.rf-ddm-itm-lbl a');
+				anchors.each(function(i,el) {
+					var link = jQuery(el).attr('href');
+					if ( (jQuery(el).attr('id').indexOf('ReportId') != -1) ||
+						 (jQuery(el).attr('id').indexOf('GuideId') != -1)) {
+
+						// report or user guide links so open in a new tab.
+						jQuery(el).parent().parent().click(function(){window.open(link);});
+
+					} else {
+						// non-report links so open in the current tab.
+						jQuery(el).parent().parent().click(function(){window.location = link;});
+					}
+					jQuery(el).parent().parent().append(jQuery(el).contents());
+					jQuery(el).parent().parent().css( {"color":"#0078d0","text-decoration":"underline"} );
+				})
+				jQuery('.rf-ddm-itm-lbl a').remove();
+				// Menu off-text click hack End //
+			});
+		
+			// Session time out count and display Start
+		    function startSessionTimeoutCheck() {
+		        try {
+			        sessionTimeoutInterval = setInterval( 'sessionChecker.isNewSession( alertTimeout )', timeoutMillis );
+			        countDown( Math.floor( timeoutMillis/1000 ) );
+			        setProjectAccessComponents();
+		        } catch ( e ) {
+		        	alert("SessionMonitor Error0: " + e.message );
+		        	window.location = "#{basePath}";
+			    }
+		    }
+		    function stopSessionTimeoutCheck() {
+			    try {
+			        if (sessionTimeoutInterval) {clearInterval(sessionTimeoutInterval);}
+			        if (displayTimeout) {clearTimeout(displayTimeout);}
+				} catch ( e ) {
+		        	alert("SessionMonitor Error1: " + e.message );
+		        	window.location = "#{basePath}";
+			    }
+		    }
+		    function resetSessionTimeoutCheck() {
+			    try {
+			    	stopSessionTimeoutCheck();
+			        startSessionTimeoutCheck();
+				} catch ( e ) {
+		        	alert("SessionMonitor Error2: " + e.message );
+		        	window.location = "#{basePath}";
+			    }
+		    }
+		    function alertTimeout( newSession ) {
+		        try {
+		        	if ( newSession ) {
+			            clearInterval( sessionTimeoutInterval );
+			            clearTimeout( displayTimeout );
+			            alert("#{messages['You have been logged out after a period of inactivity']}");
+			            window.location = "#{basePath}";
+			        }
+		        } catch ( e ) {
+		        	alert("SessionMonitor Error3: " + e.message );
+		        	window.location = "#{basePath}";
+			    }
+		    }
+		    function onAjaxRequestComplete() {
+			    try {
+			    	resetSessionTimeoutCheck();
+				} catch ( e ) {
+		        	alert("SessionMonitor Error4: " + e.message );
+		        	window.location = "#{basePath}";
+			    }
+		    }
+			function countDown( seconds ) {
+
+	    	  if ( seconds &lt; 1 ) {
+	    	    document.getElementById( "timeElapseDisplay" ).innerHTML = "00:00";
+	    	    return;
+	    	  }
+	    	  var DisplayString = null;
+	    	  if ( seconds &gt; 3600 ) {
+		    	  DisplayString = displayFormatHMS.replace( /%%H%%/g, calculateStep(seconds,3600,60) );
+		    	  DisplayString = DisplayString.replace( /%%M%%/g, calculateStep(seconds,60,60) );
+		    	  DisplayString = DisplayString.replace( /%%S%%/g, calculateStep(seconds,1,60) );
+		    	  
+		      } else {
+		    	  DisplayString = displayFormatMS.replace( /%%M%%/g, calculateStep(seconds,60,60) );
+		    	  DisplayString = DisplayString.replace( /%%S%%/g, calculateStep(seconds,1,60) );
+			  }
+
+	    	  document.getElementById( "timeElapseDisplay" ).innerHTML = DisplayString;
+	    	  displayTimeout = setTimeout( "countDown(" + ( seconds - 1 ) + ")", 990 );
+        	}
+			function calculateStep( seconds, num1, num2 ) {
+
+			  var SecondsString = ((Math.floor(seconds/num1))%num2).toString();
+			  if ( SecondsString.length &lt; 2 ){
+				  SecondsString = "0" + SecondsString;
+			  }
+			  return SecondsString;
+			}
+			// Session time out count and display End
+			
+			// Disable 'Open Project' button, clear selected project Start
+			function setProjectAccessComponents() {
+				try {
+					if ( document.getElementById( "activeProjectForm:openProject" ) ) {
+						document.getElementById( "activeProjectForm:openProject" ).disabled = true;
+					}
+				} catch ( error ) {
+					alert( "setOpenProjectButton Error: " + error );
+				}
+			}
+			// Disable 'Open Project' button, clear selected project End
+		</script>
+	  <div class="header">
+         <ui:include src="header.xhtml" />
+      </div>
+      <ui:include src="home_menu.xhtml">
+         <ui:param name="projectName" value="clahrc2"/>
+      </ui:include>
+      <h:messages id="statusMessages" globalOnly="true" styleClass="message"
+            errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg"
+            rendered="#{(showGlobalMessages != 'false') and (view.viewId != '/home.xhtml')}"/>
+            
+      <div class="body">
+         <ui:insert name="body"/>
+      </div>
+      <div class="footer">
+         <ui:include src="footer.xhtml" />
+      </div>
+      <h:outputStylesheet name="home_template.css"/>
+      <h:outputStylesheet name="theme.ecss"/>
+      <h:outputStylesheet name="theme.css"/>
+   </h:body>
+</html>
+</f:view>

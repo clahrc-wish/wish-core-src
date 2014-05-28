@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright 2013 Imperial College London
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
+    <list-property name="configVars">
+        <structure>
+            <property name="name">__isdisplay__Start_Date_27_0</property>
+            <property name="value">01/04/2011</property>
+        </structure>
+        <structure>
+            <property name="name">__isdisplay__End_Date_855_1</property>
+            <property name="value">16/09/2013</property>
+        </structure>
+        <structure>
+            <property name="name">__isdisplay__Round_1360_2</property>
+            <property name="value">Round 1</property>
+        </structure>
+        <structure>
+            <property name="name">__isdisplay__Round_1360_3</property>
+            <property name="value">Round 1 Rollout</property>
+        </structure>
+        <structure>
+            <property name="name">__isdisplay__Round_1360_4</property>
+            <property name="value">Round 2</property>
+        </structure>
+        <structure>
+            <property name="name">__isdisplay__Round_1360_5</property>
+            <property name="value">Round 2 Rollout</property>
+        </structure>
+        <structure>
+            <property name="name">__isdisplay__Round_1360_6</property>
+            <property name="value">Round 3</property>
+        </structure>
+        <structure>
+            <property name="name">__isdisplay__Round_1360_7</property>
+            <property name="value">Round 3 Rollout</property>
+        </structure>
+        <structure>
+            <property name="name">__isdisplay__Round_1360_8</property>
+            <property name="value">Round 4</property>
+        </structure>
+        <structure>
+            <property name="name">__isdisplay__ProjectStatus_1505_9</property>
+            <property name="value">All</property>
+        </structure>
+        <structure>
+            <property name="name">__isdisplay__User_ID_1597_10</property>
+            <property name="value">3</property>
+        </structure>
+        <structure>
+            <property name="name">User_ID_1597_11</property>
+            <property name="value">3</property>
+        </structure>
+        <structure>
+            <property name="name">User_ID_1597_type_</property>
+            <property name="value">integer</property>
+        </structure>
+        <structure>
+            <property name="name">ProjectStatus_1505_12</property>
+            <property name="value">All</property>
+        </structure>
+        <structure>
+            <property name="name">ProjectStatus_1505_type_</property>
+            <property name="value">string</property>
+        </structure>
+        <structure>
+            <property name="name">Start_Date_27_13</property>
+            <property name="value">2011-04-01</property>
+        </structure>
+        <structure>
+            <property name="name">Start_Date_27_type_</property>
+            <property name="value">date</property>
+        </structure>
+        <structure>
+            <property name="name">Round_1360_14</property>
+            <property name="value">R1</property>
+        </structure>
+        <structure>
+            <property name="name">Round_1360_15</property>
+            <property name="value">R1 Rollout</property>
+        </structure>
+        <structure>
+            <property name="name">Round_1360_16</property>
+            <property name="value">R2</property>
+        </structure>
+        <structure>
+            <property name="name">Round_1360_17</property>
+            <property name="value">R2 Rollout</property>
+        </structure>
+        <structure>
+            <property name="name">Round_1360_18</property>
+            <property name="value">R3</property>
+        </structure>
+        <structure>
+            <property name="name">Round_1360_19</property>
+            <property name="value">R3 Rollout</property>
+        </structure>
+        <structure>
+            <property name="name">Round_1360_20</property>
+            <property name="value">R4</property>
+        </structure>
+        <structure>
+            <property name="name">Round_1360_type_</property>
+            <property name="value">string</property>
+        </structure>
+        <structure>
+            <property name="name">End_Date_855_21</property>
+            <property name="value">2013-09-16</property>
+        </structure>
+        <structure>
+            <property name="name">End_Date_855_type_</property>
+            <property name="value">date</property>
+        </structure>
+    </list-property>
+</report>

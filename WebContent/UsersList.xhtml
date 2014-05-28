@@ -1,0 +1,239 @@
+<!--
+Copyright 2013 Imperial College London
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.org/schema/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/home_template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="usersSearch" styleClass="edit">
+
+        <rich:collapsiblePanel headerClass="collapsiblePanelHeader" switchType="ajax" expanded="#{not identity.hasRole(roleIDs.WRT_ADMIN_id)}">
+			<f:facet name="headerCollapsed">Users Search (click to expand)</f:facet>
+			<f:facet name="headerExpanded">Users Search (click to collapse)</f:facet>
+
+            <s:decorate template="layout/display.xhtml">
+                <ui:define name="label">First name</ui:define>
+                <h:inputText id="firstName" value="#{usersList.users.firstName}"/>
+            </s:decorate>
+
+            <s:decorate template="layout/display.xhtml">
+                <ui:define name="label">Last name</ui:define>
+                <h:inputText id="lastName" value="#{usersList.users.lastName}"/>
+            </s:decorate>
+
+            <s:decorate template="layout/display.xhtml">
+                <ui:define name="label">Login name</ui:define>
+                <h:inputText id="loginName" value="#{usersList.users.loginName}"/>
+            </s:decorate>
+
+            <s:decorate template="layout/display.xhtml">
+                <ui:define name="label">Email</ui:define>
+                <h:inputText id="email" value="#{usersList.users.email}"/>
+            </s:decorate>
+
+            <s:decorate template="layout/display.xhtml">
+                <ui:define name="label">Match</ui:define>
+                <h:selectOneRadio id="logic" value="#{usersList.restrictionLogicOperator}" styleClass="radio">
+                    <f:selectItem itemLabel="All" itemValue="and"/>
+                    <f:selectItem itemLabel="Any" itemValue="or"/>
+                </h:selectOneRadio>
+            </s:decorate>
+
+	        <br />
+			<div>
+	            <h:commandButton id="search" value="Search" action="/UsersList.xhtml"/>
+	            <s:button id="reset" value="Reset" includePageParams="false"/>
+	        </div>
+
+        </rich:collapsiblePanel>
+
+    </h:form>
+
+	<s:div styleClass="actionButtons" rendered="#{empty from}">
+        <s:button view="/UsersCreate.xhtml"
+                    id="createDuplicate"
+           propagation="none"
+                 value="Create User account"
+              disabled="#{not identity.hasRole(roleIDs.PROJECT_ADMIN_id)}"
+              rendered="#{not empty usersList.users.firstName or not empty usersList.users.lastName or not empty usersList.users.loginName or not empty usersList.users.email or identity.hasRole(roleIDs.WRT_ADMIN_id)}">
+            <f:param name="usersId"/>
+        </s:button>
+    </s:div>
+    
+    <rich:panel rendered="#{not empty usersList.users.firstName or not empty usersList.users.lastName or not empty usersList.users.loginName or not empty usersList.users.email or identity.hasRole(roleIDs.WRT_ADMIN_id)}">
+        <f:facet name="header">Users Search Results (#{empty usersList.resultList ? 0 : (usersList.paginated ? usersList.resultCount : usersList.resultList.size)})</f:facet>
+    <div class="results" id="usersList">
+
+    <h:outputText value="The Users search returned no results."
+               rendered="#{empty usersList.resultList}"/>
+
+    <rich:dataTable id="usersList"
+                var="_users"
+              value="#{usersList.resultList}"
+           rendered="#{not empty usersList.resultList}">
+        <h:column rendered="#{identity.hasRole(roleIDs.SUPER_ADMIN_id)}">
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{usersList}"/>
+                    <ui:param name="propertyLabel" value="Id"/>
+                    <ui:param name="propertyPath" value="users.id"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_users.id}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{usersList}"/>
+                    <ui:param name="propertyLabel" value="First name"/>
+                    <ui:param name="propertyPath" value="users.firstName"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_users.firstName}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{usersList}"/>
+                    <ui:param name="propertyLabel" value="Last name"/>
+                    <ui:param name="propertyPath" value="users.lastName"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_users.lastName}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{usersList}"/>
+                    <ui:param name="propertyLabel" value="Registration date"/>
+                    <ui:param name="propertyPath" value="users.registrationDate"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_users.registrationDate}">
+                <f:convertDateTime type="date" dateStyle="short"/>
+            </h:outputText>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{usersList}"/>
+                    <ui:param name="propertyLabel" value="Active"/>
+                    <ui:param name="propertyPath" value="users.active"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_users.active}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{usersList}"/>
+                    <ui:param name="propertyLabel" value="Login name"/>
+                    <ui:param name="propertyPath" value="users.loginName"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_users.loginName}" style="#{_users.id == identity.id ? 'background-color:lightgrey;' : ''}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{usersList}"/>
+                    <ui:param name="propertyLabel" value="Email"/>
+                    <ui:param name="propertyPath" value="users.email"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_users.email}"/>
+        </h:column>
+        <rich:column styleClass="action">
+            <f:facet name="header">Action</f:facet>
+            <s:link view="/#{empty from ? 'Users' : from}.xhtml"
+                   value="#{empty from ? 'View' : 'Select'}"
+             propagation="#{empty from ? 'none' : 'default'}"
+                      id="usersViewId"
+                disabled="#{(_users.id != identity.id) and not identity.hasRole(roleIDs.PROJECT_ADMIN_id)}">
+                <f:param name="usersId"
+                        value="#{_users.id}"/>
+            </s:link>
+            #{' '}
+            <s:link view="/UsersEdit.xhtml"
+                   value="Edit"
+             propagation="none"
+                      id="usersEdit"
+                rendered="#{empty from}"
+                disabled="#{(_users.id != identity.id) and not identity.hasRole(roleIDs.PROJECT_ADMIN_id)}">
+                <f:param name="usersId"
+                        value="#{_users.id}"/>
+            </s:link>
+        </rich:column>
+    </rich:dataTable>
+
+    </div>
+    </rich:panel>
+
+    <div class="tableControl">
+
+        <s:link view="/UsersList.xhtml"
+            rendered="#{usersList.previousExists}"
+               value="#{messages.left}#{messages.left} First Page"
+                  id="firstPage">
+          <f:param name="firstResult" value="0"/>
+        </s:link>
+
+        <s:link view="/UsersList.xhtml"
+            rendered="#{usersList.previousExists}"
+               value="#{messages.left} Previous Page"
+                  id="previousPage">
+            <f:param name="firstResult"
+                    value="#{usersList.previousFirstResult}"/>
+        </s:link>
+
+        <s:link view="/UsersList.xhtml"
+            rendered="#{usersList.nextExists}"
+               value="Next Page #{messages.right}"
+                  id="nextPage">
+            <f:param name="firstResult"
+                    value="#{usersList.nextFirstResult}"/>
+        </s:link>
+
+        <s:link view="/UsersList.xhtml"
+            rendered="#{usersList.nextExists}"
+               value="Last Page #{messages.right}#{messages.right}"
+                  id="lastPage">
+            <f:param name="firstResult"
+                    value="#{usersList.lastFirstResult}"/>
+        </s:link>
+
+    </div>
+
+    <s:div styleClass="actionButtons" rendered="#{empty from}">
+        <s:button view="/UsersCreate.xhtml"
+                    id="create"
+           propagation="none"
+                 value="Create User account"
+              disabled="#{not identity.hasRole(roleIDs.PROJECT_ADMIN_id)}">
+            <f:param name="usersId"/>
+        </s:button>
+    </s:div>
+
+</ui:define>
+
+</ui:composition>

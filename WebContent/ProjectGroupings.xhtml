@@ -1,0 +1,150 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.org/schema/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/home_template.xhtml">
+
+<ui:define name="body">
+
+    <rich:panel>
+        <f:facet name="header">Project grouping details</f:facet>
+
+
+        <s:decorate id="name" template="layout/display.xhtml">
+            <ui:define name="label">Name</ui:define>
+            <h:outputText value="#{projectGroupingsHome.instance.name}"/>
+        </s:decorate>
+
+        <s:decorate id="description" template="layout/display.xhtml">
+            <ui:define name="label">Description</ui:define>
+            <h:outputText value="#{projectGroupingsHome.instance.description}"/>
+        </s:decorate>
+
+        <s:decorate id="theme" template="layout/display.xhtml">
+            <ui:define name="label">Theme</ui:define>
+            <h:outputText value="#{projectGroupingsHome.instance.theme}"/>
+        </s:decorate>
+
+        <div style="clear:both"/>
+
+    </rich:panel>
+
+    <div class="actionButtons">
+
+        <s:button view="/ProjectGroupingsEdit.xhtml"
+                    id="edit"
+                 value="Edit"
+              disabled="#{not identity.hasRole(roleIDs.WRT_ADMIN_id)}"/>
+
+        <s:button view="/#{empty projectGroupingsFrom ? 'ProjectGroupingsList' : projectGroupingsFrom}.xhtml"
+                    id="done"
+                 value="Done"
+                action="#{bijectionUtility.clearInstances('projectsHome')}"/>
+
+    </div>
+
+    <rich:collapsiblePanel headerClass="collapsiblePanelHeader" switchType="client" expanded="false">
+			<f:facet name="headerCollapsed">Project groupings entries (click to expand)</f:facet>
+			<f:facet name="headerExpanded">Project groupings entries (click to collapse)</f:facet> 
+			
+	    <rich:tabPanel switchType="client">
+	
+	    <rich:tab>
+	        <f:facet name="header">
+	            <h:panelGroup><h:graphicImage value="/img/onetomany.gif" style="vertical-align: middle; padding-right: 4px;"/>Projects</h:panelGroup>
+	        </f:facet>
+	    <h:form styleClass="association" id="projectsesChildren">
+	
+	        <h:outputText value="There are no projects associated with this project grouping."
+	                   rendered="#{empty projectGroupingsHome.projectses}"/>
+	
+	        <rich:dataTable value="#{projectGroupingsHome.projectses}"
+	                       var="_projects"
+	                  rendered="#{not empty projectGroupingsHome.projectses}"
+	                rowClasses="rvgRowOne,rvgRowTwo"
+	                        id="projectsesTable"
+	                      rows="10">
+	            <rich:column sortBy="#{_projects.id}">
+	                <f:facet name="header">Entry ID</f:facet>
+	                <h:outputText value="#{_projects.id}"/>
+	            </rich:column>
+	            <rich:column sortBy="#{_projects.name}">
+	                <f:facet name="header">Identifier</f:facet>
+	                <h:outputText value="#{_projects.name}"/>
+	            </rich:column>
+	            <rich:column sortBy="#{_projects.startDate}">
+	                <f:facet name="header">Start date</f:facet>
+	                <h:outputText value="#{_projects.startDate}">
+	                    <f:convertDateTime type="date" dateStyle="short"/>
+	                </h:outputText>
+	            </rich:column>
+	            <rich:column sortBy="#{_projects.implementationStartDate}">
+	                <f:facet name="header">Implementation start date</f:facet>
+	                <h:outputText value="#{_projects.implementationStartDate}">
+	                    <f:convertDateTime type="date" dateStyle="short"/>
+	                </h:outputText>
+	            </rich:column>
+	            <rich:column sortBy="#{_projects.endDate}">
+	                <f:facet name="header">End date</f:facet>
+	                <h:outputText value="#{_projects.endDate}">
+	                    <f:convertDateTime type="date" dateStyle="short"/>
+	                </h:outputText>
+	            </rich:column>
+	            <rich:column sortBy="#{_projects.shortName}">
+	                <f:facet name="header">Label</f:facet>
+	                <h:outputText value="#{_projects.shortName}"/>
+	            </rich:column>
+	            <rich:column sortBy="#{_projects.description}">
+	                <f:facet name="header">Description</f:facet>
+	                <h:outputText value="#{_projects.description}"/>
+	            </rich:column>
+	            <rich:column sortBy="#{_projects.hostOrganization}">
+	                <f:facet name="header">Host organization</f:facet>
+	                <h:outputText value="#{_projects.hostOrganization}"/>
+	            </rich:column>
+	            <rich:column sortBy="#{_projects.siteStructure}">
+	                <f:facet name="header">Site structure</f:facet>
+	                <h:outputText value="#{_projects.siteStructure}"/>
+	            </rich:column>
+	            <rich:column sortBy="#{_projects.type}">
+	                <f:facet name="header">Type</f:facet>
+	                <h:outputText value="#{_projects.type}"/>
+	            </rich:column>
+	            <rich:column sortBy="#{_projects.active}">
+	                <f:facet name="header">Active</f:facet>
+	                <h:outputText value="#{_projects.active}"/>
+	            </rich:column>
+	            <h:column>
+	                <f:facet name="header">Action</f:facet>
+	                <s:link id="selectprojects"
+	                     value="Select"
+	                      view="/Projects.xhtml">
+	                    <f:param name="projectsId"
+	                            value="#{_projects.id}"/>
+	                    <f:param name="projectsFrom" value="ProjectGroupings"/>
+	                </s:link>
+	            </h:column>
+	        </rich:dataTable>  
+	        <rich:dataScroller for="projectsesTable" renderIfSinglePage="false"></rich:dataScroller>
+	
+	    </h:form>
+	
+	    <div class="actionButtons">
+	        <s:button
+	               value="Add project"
+	                view="/ProjectsEdit.xhtml">
+	            <f:param name="projectGroupingsId"
+	                    value="#{projectGroupingsHome.instance.id}"/>
+	            <f:param name="projectsFrom" value="ProjectGroupings"/>
+	        </s:button>
+	    </div>
+	    </rich:tab>
+	</rich:tabPanel>
+    </rich:collapsiblePanel>
+</ui:define>
+
+</ui:composition>

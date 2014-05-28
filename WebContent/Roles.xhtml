@@ -1,0 +1,264 @@
+<!--
+Copyright 2013 Imperial College London
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.org/schema/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/home_template.xhtml">
+
+<ui:define name="body">
+
+    <rich:panel>
+        <f:facet name="header">Role details</f:facet>
+
+
+        <s:decorate id="name" template="layout/display.xhtml">
+            <ui:define name="label">Name</ui:define>
+            <h:outputText value="#{rolesHome.instance.name}"/>
+        </s:decorate>
+
+        <s:decorate id="description" template="layout/display.xhtml">
+            <ui:define name="label">Description</ui:define>
+            <h:outputText value="#{rolesHome.instance.description}"/>
+        </s:decorate>
+
+        <div style="clear:both"/>
+
+    </rich:panel>
+
+    <div class="actionButtons">
+
+        <s:button view="/RolesEdit.xhtml"
+                    id="edit"
+                 value="Edit"/>
+
+        <s:button view="/#{empty rolesFrom ? 'RolesList' : rolesFrom}.xhtml"
+                    id="done"
+                 value="Done"
+                action="#{bijectionUtility.clearInstances('rolesHome')}"/>
+
+    </div>
+
+	<rich:collapsiblePanel headerClass="collapsiblePanelHeader" switchType="client" expanded="false">
+			<f:facet name="headerCollapsed">Role assignments (click to expand)</f:facet>
+			<f:facet name="headerExpanded">Role assignments (click to collapse)</f:facet> 
+	
+		    <rich:tabPanel switchType="client" rendered="#{rolesHome.anyActivities()}">
+		
+			    <rich:tab>
+			        <f:facet name="header">
+			            <h:panelGroup><h:graphicImage value="/img/onetomany.gif" style="vertical-align: middle; padding-right: 4px;"/>User project roles</h:panelGroup>
+			        </f:facet>
+			    <h:form styleClass="association" id="userProjectRolesesChildren">
+			
+			        <h:outputText value="There are no userProjectRoles associated with this roles."
+			                   rendered="#{empty rolesHome.userProjectRoleses}"/>
+			
+			        <rich:dataTable value="#{rolesHome.userProjectRoleses}"
+			                       var="_userProjectRoles"
+			                  rendered="#{not empty rolesHome.userProjectRoleses}"
+			                rowClasses="rvgRowOne,rvgRowTwo"
+			                        id="userProjectRolesesTable"
+		                          rows="10">
+			            <rich:column sortBy="#{_userProjectRoles.users.loginName}">
+			                <f:facet name="header">User</f:facet>
+			                <h:outputText value="#{_userProjectRoles.users.loginName}"/>
+			            </rich:column>
+			            <rich:column sortBy="#{_userProjectRoles.projects.shortName}">
+			                <f:facet name="header">Project</f:facet>
+			                <h:outputText value="#{_userProjectRoles.projects.shortName}"/>
+			            </rich:column>
+			            <rich:column sortBy="#{_userProjectRoles.roles.name}">
+			                <f:facet name="header">Role</f:facet>
+			                <h:outputText value="#{_userProjectRoles.roles.name}"/>
+			            </rich:column>
+			            <h:column>
+			                <f:facet name="header">Action</f:facet>
+			                <s:link id="selectuserProjectRoles"
+			                     value="Select"
+			                      view="/UserProjectRoles.xhtml">
+			                    <f:param name="userProjectRolesUserId" value="#{_userProjectRoles.id.userId}"/>
+                				<f:param name="userProjectRolesProjectId" value="#{_userProjectRoles.id.projectId}"/>
+			                    <f:param name="userProjectRolesFrom" value="Roles"/>
+			                </s:link>
+			            </h:column>
+			        </rich:dataTable>
+			        <rich:dataScroller for="userProjectRolesesTable" renderIfSinglePage="false"/>
+			
+			    </h:form>
+			
+			    <div class="actionButtons">
+			        <s:button
+			               value="Add userProjectRoles"
+			                view="/UserProjectRolesCreate.xhtml"
+			            disabled="#{not identity.hasRole(roleIDs.SUPER_ADMIN_id)}">
+			            <f:param name="rolesId" value="#{rolesHome.instance.id}"/>
+			            <f:param name="userProjectRolesFrom" value="Roles"/>
+			        </s:button>
+			    </div>
+			    </rich:tab>
+			    
+			    <rich:tab>
+			        <f:facet name="header">
+			            <h:panelGroup><h:graphicImage value="/img/onetomany.gif" style="vertical-align: middle; padding-right: 4px;"/>User project role requests</h:panelGroup>
+			        </f:facet>
+			    <h:form styleClass="association" id="userProjectRoleRequestsesChildren">
+			
+			        <h:outputText value="There are no userProjectRoleRequestses associated with this roles."
+			                   rendered="#{empty rolesHome.userProjectRoleRequestses}"/>
+			
+			        <rich:dataTable value="#{rolesHome.userProjectRoleRequestses}"
+			                       var="_userProjectRoleRequests"
+			                  rendered="#{not empty rolesHome.userProjectRoleRequestses}"
+			                rowClasses="rvgRowOne,rvgRowTwo"
+			                        id="userProjectRoleRequestsesTable"
+		                          rows="10">
+			            <rich:column sortBy="#{_userProjectRoleRequests.users.loginName}">
+			                <f:facet name="header">User</f:facet>
+			                <h:outputText value="#{_userProjectRoleRequests.users.loginName}"/>
+			            </rich:column>
+			            <rich:column sortBy="#{_userProjectRoleRequests.projects.shortName}">
+			                <f:facet name="header">Project</f:facet>
+			                <h:outputText value="#{_userProjectRoleRequests.projects.shortName}"/>
+			            </rich:column>
+			            <rich:column sortBy="#{_userProjectRoleRequests.roles.name}">
+			                <f:facet name="header">Role</f:facet>
+			                <h:outputText value="#{_userProjectRoleRequests.roles.name}"/>
+			            </rich:column>
+			            <rich:column sortBy="#{_userProjectRoleRequests.rcTimestamp}">
+			                <f:facet name="header">Date Request Made</f:facet>
+			                <h:outputText value="#{_userProjectRoleRequests.rcTimestamp}">
+			                    <f:convertDateTime type="both" dateStyle="short"/>
+			                </h:outputText>
+		            	</rich:column>
+			            <h:column>
+			                <f:facet name="header">Action</f:facet>
+			                <s:link id="selectuserProjectRoleRequests"
+			                     value="Select"
+			                      view="/UserProjectRoleRequests.xhtml">
+			                    <f:param name="userProjectRoleRequestsUserId"
+			                            value="#{_userProjectRoleRequests.id.userId}"/>
+			                    <f:param name="userProjectRoleRequestsProjectId"
+			                            value="#{_userProjectRoleRequests.id.projectId}"/>
+			                    <f:param name="userProjectRoleRequestsFrom" value="Roles"/>
+			                </s:link>
+			            </h:column>
+			        </rich:dataTable>
+			        <rich:dataScroller for="userProjectRoleRequestsesTable" renderIfSinglePage="false"/>
+			
+			    </h:form>
+			
+			    <div class="actionButtons">
+			        <s:button
+			               value="Add userProjectRoleRequests"
+			                view="/UserProjectRoleRequestsCreate.xhtml">
+			            <f:param name="userProjectRoleRequestsUserId" value="#{identity.id}"/>
+            			<f:param name="userProjectRoleRequestsProjectId"/>
+            			<f:param name="usersId" value="#{identity.id}"/>
+            			<f:param name="rolesId" value="#{rolesHome.instance.id}"/>
+			            <f:param name="userProjectRoleRequestsFrom" value="Roles"/>
+			        </s:button>
+			    </div>
+			    </rich:tab>
+			
+			    <rich:tab>
+			        <f:facet name="header">
+			            <h:panelGroup><h:graphicImage value="/img/onetomany.gif" style="vertical-align: middle; padding-right: 4px;"/>Project role audits</h:panelGroup>
+			        </f:facet>
+			    <h:form styleClass="association" id="userProjectRolesAuditsChildren">
+			
+			        <h:outputText value="There are no userProjectRolesAudits associated with this roles."
+			                   rendered="#{empty rolesHome.userProjectRolesAudits}"/>
+			
+			        <rich:dataTable value="#{rolesHome.userProjectRolesAudits}"
+			                       var="_userProjectRolesAudit"
+			                  rendered="#{not empty rolesHome.userProjectRolesAudits}"
+			                rowClasses="rvgRowOne,rvgRowTwo"
+			                        id="userProjectRolesAuditsTable"
+		                          rows="10">
+			            <rich:column sortBy="#{_userProjectRolesAudit.id}" rendered="#{identity.hasRole(roleIDs.SUPER_ADMIN_id)}">
+		                    <f:facet name="header">Id</f:facet>
+		                    <h:outputText value="#{_userProjectRolesAudit.id}"/>
+		                </rich:column>
+		                <rich:column sortBy="#{_userProjectRolesAudit.usersByUserId.loginName}">
+		                    <f:facet name="header">User</f:facet>
+		                    <h:outputText value="#{_userProjectRolesAudit.usersByUserId.loginName}"/>
+		                </rich:column>
+		                <rich:column sortBy="#{_userProjectRolesAudit.projects.shortName}">
+		                    <f:facet name="header">Project</f:facet>
+		                    <h:outputText value="#{_userProjectRolesAudit.projects.shortName}"/>
+		                </rich:column>
+		                <rich:column sortBy="#{_userProjectRolesAudit.roles.name}">
+			                <f:facet name="header">Role</f:facet>
+			                <h:outputText value="#{_userProjectRolesAudit.roles.name}"/>
+			            </rich:column>
+		                <rich:column sortBy="#{_userProjectRolesAudit.reqTimestamp}">
+		                    <f:facet name="header">Date Request Made</f:facet>
+		                    <h:outputText value="#{_userProjectRolesAudit.reqTimestamp}">
+		                        <f:convertDateTime type="both" dateStyle="short"/>
+		                    </h:outputText>
+		                </rich:column>
+		                <rich:column sortBy="#{_userProjectRolesAudit.action}">
+		                    <f:facet name="header">Action</f:facet>
+		                    <h:outputText value="#{_userProjectRolesAudit.action}"/>
+		                </rich:column>
+		                <rich:column sortBy="#{_userProjectRolesAudit.resTimestamp}">
+		                    <f:facet name="header">Date Action Done</f:facet>
+		                    <h:outputText value="#{_userProjectRolesAudit.resTimestamp}">
+		                        <f:convertDateTime type="both" dateStyle="short"/>
+		                    </h:outputText>
+		                </rich:column>
+		                <rich:column sortBy="#{_userProjectRolesAudit.usersByAdminId.loginName}">
+		                    <f:facet name="header">Admin</f:facet>
+		                    <h:outputText value="#{_userProjectRolesAudit.usersByAdminId.loginName}"/>
+		                </rich:column>
+				        <h:column>
+			                <f:facet name="header">Action</f:facet>
+			                <s:link id="selectuserProjectRolesAudit"
+			                     value="Select"
+			                      view="/UserProjectRolesAudit.xhtml">
+			                    <f:param name="userProjectRolesAuditId"
+			                            value="#{_userProjectRolesAudit.id}"/>
+			                    <f:param name="userProjectRolesAuditFrom" value="Roles"/>
+			                </s:link>
+			            </h:column>
+			        </rich:dataTable>
+			        <rich:dataScroller for="userProjectRolesAuditsTable" renderIfSinglePage="false"/>
+			
+			    </h:form>
+			
+			    <div class="actionButtons">
+			        <s:button
+			               value="Add userProjectRolesAudit"
+			                view="/UserProjectRolesAuditEdit.xhtml" 
+                        disabled="true">
+			            <f:param name="rolesId"
+			                    value="#{rolesHome.instance.id}"/>
+			            <f:param name="userProjectRolesAuditFrom" value="Roles"/>
+			        </s:button>
+			    </div>
+			    </rich:tab>
+		</rich:tabPanel>
+		
+	</rich:collapsiblePanel>
+	
+</ui:define>
+
+</ui:composition>

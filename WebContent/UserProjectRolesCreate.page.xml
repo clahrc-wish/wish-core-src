@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2013 Imperial College London
+  
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+    http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<page xmlns="http://jboss.org/schema/seam/pages"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://jboss.org/schema/seam/pages http://jboss.org/schema/seam/pages-2.3.xsd"
+      no-conversation-view-id="/UserProjectRolesList.xhtml"
+      login-required="true">
+
+   <restrict>#{identity.hasRole(roleIDs.PROJECT_ADMIN_id) and (not empty identityHome.definedInstance)}</restrict>
+   
+   <begin-conversation join="true" flush-mode="MANUAL"/>
+
+   <action execute="#{userProjectRolesHome.wire}"/>
+
+   <param name="userProjectRolesFrom"/>
+   <param name="userProjectRolesUserId" value="#{userProjectRolesHome.userProjectRolesId.userId}"/>
+   <param name="userProjectRolesProjectId" value="#{userProjectRolesHome.userProjectRolesId.projectId}"/>
+   <param name="usersFrom"/>
+   <param name="usersId" value="#{usersHome.usersId}"/>
+
+   <param name="projectsFrom"/>
+   <param name="projectsId" value="#{projectsHome.projectsId}"/>
+
+   <param name="rolesFrom"/>
+   <param name="rolesId" value="#{rolesHome.rolesId}"/>
+
+	<navigation>
+	  <rule if-outcome="home">
+	    <redirect view-id="/home.xhtml"/>
+	  </rule>
+	</navigation>
+	<navigation from-action="#{identity.logout}">
+	  <end-conversation/>
+	  <redirect url="#{basePath}"/>
+	</navigation>
+
+
+   <navigation from-action="#{userProjectRolesHome.persist}">
+      <rule if-outcome="persisted">
+         <end-conversation/>
+         <redirect view-id="/UserProjectRoles.xhtml"/>
+      </rule>
+      <rule if-outcome="duplicate">
+         <end-conversation/>
+         <redirect view-id="/UserProjectRolesCreate.xhtml"/>
+      </rule>
+   </navigation>
+
+</page>

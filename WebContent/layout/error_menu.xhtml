@@ -1,0 +1,58 @@
+<!--
+Copyright 2013 Imperial College London
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<rich:toolbar
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:s="http://jboss.org/schema/seam/taglib"
+    xmlns:rich="http://richfaces.org/rich">
+    
+    <rich:toolbarGroup>
+        <s:link id="menuHomeId" view="/home.xhtml" value="Welcome Page" propagation="end"/>
+        <s:link id="menuProjectHomeId" view="/projectHome.xhtml" value="Project Home" rendered="#{not empty activeProjectHome.definedInstance}"/>
+    </rich:toolbarGroup>
+    
+    
+    <rich:dropDownMenu showDelay="250" hideDelay="0" submitMode="none">
+        <f:facet name="label">Resources</f:facet>
+        
+        <rich:menuItem disabled="#{not identity.hasRole(roleIDs.PROJECT_VIEWER_id)}">
+        <h:outputLink target="_blank" value="#{contextPath}/doc/WISH_User_guide.pdf" id="UserGuideId">
+        	<h:outputText styleClass="dropDownGroupStyle" value="WISH User Guide" />
+		</h:outputLink>
+     </rich:menuItem>
+	<rich:menuItem disabled="#{not identity.hasRole(roleIDs.PROJECT_VIEWER_id)}"
+	               rendered="#{(facesContext.viewRoot.viewId != '/ProblemReport.xhtml') and not suspendedModules.isSuspended( 'bugzilla' )}">
+    	<s:link view="/ProblemReport.xhtml" 
+    	        value="Report a problem" 
+    	        id="ReportProblemId" 
+    	        includePageParams="false" 
+    	        propagation="none">
+    	        <f:param name="from" value="error"/>
+    	</s:link>
+     </rich:menuItem>
+    </rich:dropDownMenu>
+    
+    <!-- @newMenuItem@ -->
+    <rich:toolbarGroup location="right">
+    	<h:outputLabel value="Session expires in: " rendered="#{identity.loggedIn}" >
+			<h:outputText id="timeElapseDisplay" value="00:00" />
+		</h:outputLabel>
+        <h:outputText id="menuWelcomeId" value="Signed in as: #{credentials.username}" rendered="#{identity.loggedIn}"/>
+        <s:link id="menuLogoutId" view="/home.xhtml" action="#{identity.logout}" value="Logout" rendered="#{identity.loggedIn}" propagation="none"/>
+    </rich:toolbarGroup>
+</rich:toolbar>

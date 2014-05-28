@@ -1,0 +1,346 @@
+<!--
+Copyright 2013 Imperial College London
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.org/schema/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/home_template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="userProjectRolesAudit" styleClass="edit">
+
+        <rich:panel>
+            <f:facet name="header">#{userProjectRolesAuditHome.managed ? 'Edit' : 'Add'} User project roles audit</f:facet>
+
+
+
+
+
+
+
+            <s:decorate id="reqTimestampField" template="layout/edit.xhtml">
+                <ui:define name="label">Req timestamp</ui:define>
+                <rich:calendar id="reqTimestamp"
+                         required="true"
+                enableManualInput="true"
+                            value="#{userProjectRolesAuditHome.instance.reqTimestamp}" datePattern="MM/dd/yyyy hh:mm a"/>
+            </s:decorate>
+
+
+            <s:decorate id="actionField" template="layout/edit.xhtml">
+                <ui:define name="label">Action</ui:define>
+                <h:inputText id="action"
+                       required="true"
+                           size="8"
+                      maxlength="8"
+                          value="#{userProjectRolesAuditHome.instance.action}">
+                    <a:ajax event="blur" render="actionField" bypassUpdates="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="resTimestampField" template="layout/edit.xhtml">
+                <ui:define name="label">Res timestamp</ui:define>
+                <rich:calendar id="resTimestamp"
+                         required="true"
+                enableManualInput="true"
+                            value="#{userProjectRolesAuditHome.instance.resTimestamp}" datePattern="MM/dd/yyyy hh:mm a"/>
+            </s:decorate>
+
+            <div style="clear:both">
+                <span class="required">*</span>
+                required fields
+            </div>
+
+        </rich:panel>
+
+        <div class="actionButtons">
+
+            <h:commandButton id="save"
+                          value="Save"
+                         action="#{userProjectRolesAuditHome.persist}"
+                       disabled="#{!userProjectRolesAuditHome.wired}"
+                       rendered="#{!userProjectRolesAuditHome.managed}">
+                <s:conversationId/>
+            </h:commandButton>
+
+            <h:commandButton id="update"
+                          value="Update"
+                         action="#{userProjectRolesAuditHome.update}"
+                       rendered="#{userProjectRolesAuditHome.managed}"
+                       disabled="true">
+                <s:conversationId/>
+            </h:commandButton>
+
+            <h:commandButton id="delete"
+                          value="Delete"
+                         action="#{userProjectRolesAuditHome.remove}"
+                      immediate="true"
+                       rendered="#{userProjectRolesAuditHome.managed}"
+              disabled="true"/>
+
+            <s:button id="cancelEdit"
+                   value="Cancel"
+             propagation="end"
+                    view="/UserProjectRolesAudit.xhtml"
+                rendered="#{userProjectRolesAuditHome.managed}"/>
+
+            <s:button id="cancelAdd"
+                   value="Cancel"
+             propagation="end"
+                    view="/#{empty userProjectRolesAuditFrom ? 'UserProjectRolesAuditList' : userProjectRolesAuditFrom}.xhtml"
+                rendered="#{!userProjectRolesAuditHome.managed}"/>
+
+        </div>
+    </h:form>
+
+<rich:tabPanel switchType="client">
+
+    <rich:tab header="Users by user id *" labelClass="required">
+    <div class="association" id="usersByUserIdParent">
+
+        <h:outputText value="There is no usersByUserId associated with this userProjectRolesAudit."
+                   rendered="#{userProjectRolesAuditHome.instance.usersByUserId == null}"/>
+
+        <rich:dataTable var="_users"
+                   value="#{userProjectRolesAuditHome.instance.usersByUserId}"
+                rendered="#{userProjectRolesAuditHome.instance.usersByUserId != null}"
+              rowClasses="rvgRowOne,rvgRowTwo"
+                      id="usersByUserIdTable">
+            <h:column rendered="#{identity.hasRole(roleIDs.SUPER_ADMIN_id)}">
+                <f:facet name="header">Id</f:facet>
+                <h:outputText value="#{_users.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">First name</f:facet>
+                <h:outputText value="#{_users.firstName}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Last name</f:facet>
+                <h:outputText value="#{_users.lastName}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Registration date</f:facet>
+                <h:outputText value="#{_users.registrationDate}">
+                    <f:convertDateTime type="date" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Active</f:facet>
+                <h:outputText value="#{_users.active}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Login name</f:facet>
+                <h:outputText value="#{_users.loginName}"/>
+            </h:column>
+            <h:column rendered="false">
+                <f:facet name="header">Password</f:facet>
+                <h:outputText value="#{_users.password}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Email</f:facet>
+                <h:outputText value="#{_users.email}"/>
+            </h:column>
+        </rich:dataTable>
+
+        <div class="actionButtons">
+            <s:button id="#{userProjectRolesAuditHome.instance.usersByUserId != null ? 'changeusersByUserIdParent' : 'selectusersByUserIdParent'}" value="#{userProjectRolesAuditHome.instance.usersByUserId != null ? 'Change' : 'Select'} usersByUserId"
+                       view="/UsersList.xhtml" disabled="true">
+                <f:param name="from" value="UserProjectRolesAuditEdit"/>
+            </s:button>
+        </div>
+
+    </div>
+    </rich:tab>
+
+    <rich:tab header="Projects *" labelClass="required">
+    <div class="association" id="projectsParent">
+
+        <h:outputText value="There is no projects associated with this userProjectRolesAudit."
+                   rendered="#{userProjectRolesAuditHome.instance.projects == null}"/>
+
+        <rich:dataTable var="_projects"
+                   value="#{userProjectRolesAuditHome.instance.projects}"
+                rendered="#{userProjectRolesAuditHome.instance.projects != null}"
+              rowClasses="rvgRowOne,rvgRowTwo"
+                      id="projectsTable">
+            <h:column rendered="#{identity.hasRole(roleIDs.SUPER_ADMIN_id)}">
+                <f:facet name="header">Id</f:facet>
+                <h:outputText value="#{_projects.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Identifier</f:facet>
+                <h:outputText value="#{_projects.name}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Start date</f:facet>
+                <h:outputText value="#{_projects.startDate}">
+                    <f:convertDateTime type="date" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Implementation start date</f:facet>
+                <h:outputText value="#{_projects.implementationStartDate}">
+                    <f:convertDateTime type="date" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">End date</f:facet>
+                <h:outputText value="#{_projects.endDate}">
+                    <f:convertDateTime type="date" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Label</f:facet>
+                <h:outputText value="#{_projects.shortName}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Description</f:facet>
+                <h:outputText value="#{_projects.description}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Host organization</f:facet>
+                <h:outputText value="#{_projects.hostOrganization}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Site structure</f:facet>
+                <h:outputText value="#{_projects.siteStructure}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Type</f:facet>
+                <h:outputText value="#{_projects.type}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Active</f:facet>
+                <h:outputText value="#{_projects.active}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Grouping</f:facet>
+                <h:outputText value="#{_projects.projectGroupings.name}"/>
+            </h:column>
+        </rich:dataTable>
+
+        <div class="actionButtons">
+            <s:button id="#{userProjectRolesAuditHome.instance.projects != null ? 'changeprojectsParent' : 'selectprojectsParent'}" value="#{userProjectRolesAuditHome.instance.projects != null ? 'Change' : 'Select'} projects"
+                       view="/ProjectsList.xhtml" disabled="true">
+                <f:param name="from" value="UserProjectRolesAuditEdit"/>
+            </s:button>
+        </div>
+
+    </div>
+    </rich:tab>
+
+    <rich:tab header="Roles *" labelClass="required">
+    <div class="association" id="rolesParent">
+
+        <h:outputText value="There is no roles associated with this userProjectRolesAudit."
+                   rendered="#{userProjectRolesAuditHome.instance.roles == null}"/>
+
+        <rich:dataTable var="_roles"
+                   value="#{userProjectRolesAuditHome.instance.roles}"
+                rendered="#{userProjectRolesAuditHome.instance.roles != null}"
+              rowClasses="rvgRowOne,rvgRowTwo"
+                      id="rolesTable">
+            <h:column rendered="#{identity.hasRole(roleIDs.SUPER_ADMIN_id)}">
+                <f:facet name="header">Id</f:facet>
+                <h:outputText value="#{_roles.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Name</f:facet>
+                <h:outputText value="#{_roles.name}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Description</f:facet>
+                <h:outputText value="#{_roles.description}"/>
+            </h:column>
+        </rich:dataTable>
+
+        <div class="actionButtons">
+            <s:button id="#{userProjectRolesAuditHome.instance.roles != null ? 'changerolesParent' : 'selectrolesParent'}" value="#{userProjectRolesAuditHome.instance.roles != null ? 'Change' : 'Select'} roles"
+                       view="/RolesList.xhtml" disabled="true">
+                <f:param name="from" value="UserProjectRolesAuditEdit"/>
+            </s:button>
+        </div>
+
+    </div>
+    </rich:tab>
+
+    <rich:tab header="Users by admin id *" labelClass="required">
+    <div class="association" id="usersByAdminIdParent">
+
+        <h:outputText value="There is no usersByAdminId associated with this userProjectRolesAudit."
+                   rendered="#{userProjectRolesAuditHome.instance.usersByAdminId == null}"/>
+
+        <rich:dataTable var="_users"
+                   value="#{userProjectRolesAuditHome.instance.usersByAdminId}"
+                rendered="#{userProjectRolesAuditHome.instance.usersByAdminId != null}"
+              rowClasses="rvgRowOne,rvgRowTwo"
+                      id="usersByAdminIdTable">
+            <h:column rendered="#{identity.hasRole(roleIDs.SUPER_ADMIN_id)}">
+                <f:facet name="header">Id</f:facet>
+                <h:outputText value="#{_users.id}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">First name</f:facet>
+                <h:outputText value="#{_users.firstName}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Last name</f:facet>
+                <h:outputText value="#{_users.lastName}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Registration date</f:facet>
+                <h:outputText value="#{_users.registrationDate}">
+                    <f:convertDateTime type="date" dateStyle="short"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Active</f:facet>
+                <h:outputText value="#{_users.active}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Login name</f:facet>
+                <h:outputText value="#{_users.loginName}"/>
+            </h:column>
+            <h:column rendered="false">
+                <f:facet name="header">Password</f:facet>
+                <h:outputText value="#{_users.password}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Email</f:facet>
+                <h:outputText value="#{_users.email}"/>
+            </h:column>
+        </rich:dataTable>
+
+        <div class="actionButtons">
+            <s:button id="#{userProjectRolesAuditHome.instance.usersByAdminId != null ? 'changeusersByAdminIdParent' : 'selectusersByAdminIdParent'}" value="#{userProjectRolesAuditHome.instance.usersByAdminId != null ? 'Change' : 'Select'} usersByAdminId"
+                       view="/UsersList.xhtml" disabled="true">
+                <f:param name="from" value="UserProjectRolesAuditEdit"/>
+            </s:button>
+        </div>
+
+    </div>
+    </rich:tab>
+</rich:tabPanel>
+</ui:define>
+
+</ui:composition>

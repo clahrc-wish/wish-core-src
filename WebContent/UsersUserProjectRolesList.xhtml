@@ -1,0 +1,277 @@
+<!--
+Copyright 2013 Imperial College London
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.org/schema/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/home_template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="usersUserProjectRolesSearch" styleClass="edit">
+
+        <rich:collapsiblePanel headerClass="collapsiblePanelHeader" switchType="ajax" expanded="false">
+			<f:facet name="headerCollapsed">Team Members Search (click to expand)</f:facet>
+			<f:facet name="headerExpanded">Team Members Search (click to collapse)</f:facet>
+
+            <s:decorate template="layout/display.xhtml">
+                <ui:define name="label">First name</ui:define>
+                <h:inputText id="firstName" value="#{usersUserProjectRolesList.usersUserProjectRoles.id.firstName}"/>
+            </s:decorate>
+
+            <s:decorate template="layout/display.xhtml">
+                <ui:define name="label">Last name</ui:define>
+                <h:inputText id="lastName" value="#{usersUserProjectRolesList.usersUserProjectRoles.id.lastName}"/>
+            </s:decorate>
+
+            <s:decorate template="layout/display.xhtml">
+                <ui:define name="label">Login name</ui:define>
+                <h:inputText id="loginName" value="#{usersUserProjectRolesList.usersUserProjectRoles.id.loginName}"/>
+            </s:decorate>
+
+            <s:decorate template="layout/display.xhtml">
+                <ui:define name="label">Email</ui:define>
+                <h:inputText id="email" value="#{usersUserProjectRolesList.usersUserProjectRoles.id.email}"/>
+            </s:decorate>
+
+            <s:decorate template="layout/display.xhtml" >
+                <ui:define name="label">Match</ui:define>
+                <h:selectOneRadio id="logic" value="#{usersUserProjectRolesList.restrictionLogicOperator}" styleClass="radio">
+                    <f:selectItem itemLabel="All" itemValue="and" itemDisabled="#{not identity.hasRole(roleIDs.WRT_ADMIN_id)}"/>
+                    <f:selectItem itemLabel="Any" itemValue="or"/>
+                </h:selectOneRadio>
+            </s:decorate>
+
+	        <br />
+			<div>
+	            <h:commandButton id="search" value="Search" action="/UsersUserProjectRolesList.xhtml"/>
+	            <s:button id="reset" value="Reset" includePageParams="false"/>
+	        </div>
+
+        </rich:collapsiblePanel>
+
+    </h:form>
+
+    <rich:panel>
+        <f:facet name="header">Team Members Search Results (#{empty usersUserProjectRolesList.resultList ? 0 : (usersUserProjectRolesList.paginated ? usersUserProjectRolesList.resultCount : usersUserProjectRolesList.resultList.size)})</f:facet>
+    <div class="results" id="usersUserProjectRolesList">
+
+    <h:outputText value="The Team Members search returned no results."
+               rendered="#{empty usersUserProjectRolesList.resultList}"/>
+
+    <rich:dataTable id="usersUserProjectRolesList"
+                var="_usersUserProjectRoles"
+              value="#{usersUserProjectRolesList.resultList}"
+           rendered="#{not empty usersUserProjectRolesList.resultList}">
+        <h:column rendered="#{identity.hasRole(roleIDs.SUPER_ADMIN_id)}">
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{usersUserProjectRolesList}"/>
+                    <ui:param name="propertyLabel" value="Id"/>
+                    <ui:param name="propertyPath" value="usersUserProjectRoles.id.id"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_usersUserProjectRoles.id.id}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{usersUserProjectRolesList}"/>
+                    <ui:param name="propertyLabel" value="First name"/>
+                    <ui:param name="propertyPath" value="usersUserProjectRoles.id.firstName"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_usersUserProjectRoles.id.firstName}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{usersUserProjectRolesList}"/>
+                    <ui:param name="propertyLabel" value="Last name"/>
+                    <ui:param name="propertyPath" value="usersUserProjectRoles.id.lastName"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_usersUserProjectRoles.id.lastName}"/>
+        </h:column>
+        <h:column rendered="#{identity.hasRole(roleIDs.SUPER_ADMIN_id)}">
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{usersUserProjectRolesList}"/>
+                    <ui:param name="propertyLabel" value="Registration date"/>
+                    <ui:param name="propertyPath" value="usersUserProjectRoles.id.registrationDate"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_usersUserProjectRoles.id.registrationDate}">
+                <f:convertDateTime type="date" dateStyle="short"/>
+            </h:outputText>
+        </h:column>
+        <h:column rendered="#{identity.hasRole(roleIDs.SUPER_ADMIN_id)}">
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{usersUserProjectRolesList}"/>
+                    <ui:param name="propertyLabel" value="Active"/>
+                    <ui:param name="propertyPath" value="usersUserProjectRoles.id.active"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_usersUserProjectRoles.id.active}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{usersUserProjectRolesList}"/>
+                    <ui:param name="propertyLabel" value="Login name"/>
+                    <ui:param name="propertyPath" value="usersUserProjectRoles.id.loginName"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_usersUserProjectRoles.id.loginName}" style="#{_usersUserProjectRoles.id.id == identity.id ? 'background-color:lightgrey;' : ''}"/>
+        </h:column>
+        <h:column  rendered="false">
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{usersUserProjectRolesList}"/>
+                    <ui:param name="propertyLabel" value="Password"/>
+                    <ui:param name="propertyPath" value="usersUserProjectRoles.id.password"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_usersUserProjectRoles.id.password}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{usersUserProjectRolesList}"/>
+                    <ui:param name="propertyLabel" value="Email"/>
+                    <ui:param name="propertyPath" value="usersUserProjectRoles.id.email"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_usersUserProjectRoles.id.email}"/>
+        </h:column>
+        <h:column rendered="#{identity.hasRole(roleIDs.SUPER_ADMIN_id)}">
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{usersUserProjectRolesList}"/>
+                    <ui:param name="propertyLabel" value="User id"/>
+                    <ui:param name="propertyPath" value="usersUserProjectRoles.id.userId"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_usersUserProjectRoles.id.userId}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{usersUserProjectRolesList}"/>
+                    <ui:param name="propertyLabel" value="Project"/>
+                    <ui:param name="propertyPath" value="usersUserProjectRoles.id.projectId"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{projectIDs.projectById.get(_usersUserProjectRoles.id.projectId).shortName}"/>
+        </h:column>
+        <h:column rendered="#{identity.hasRole(roleIDs.SUPER_ADMIN_id)}">
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{usersUserProjectRolesList}"/>
+                    <ui:param name="propertyLabel" value="Role"/>
+                    <ui:param name="propertyPath" value="usersUserProjectRoles.id.roleId"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{roleIDs.IDs_name.get(_usersUserProjectRoles.id.roleId)}"/>
+        </h:column>
+        <rich:column styleClass="action">
+            <f:facet name="header">Action</f:facet>
+            <s:link view="/#{empty from ? 'Users' : from}.xhtml"
+                   value="#{empty from ? 'View' : 'Select'}"
+             propagation="#{empty from ? 'none' : 'default'}"
+                      id="usersViewId"
+                disabled="#{(_usersUserProjectRoles.id.userId != identity.id) and not identity.hasPermission(_usersUserProjectRoles.id.projectId,roleIDs.PROJECT_ADMIN_id,'')}">
+                <f:param name="usersId" value="#{_usersUserProjectRoles.id.id}"/>
+                <f:param name="usersFrom" value="UsersUserProjectRolesList"/>
+            </s:link>
+            #{' '}
+            <s:link view="/UsersEdit.xhtml"
+                   value="Edit"
+             propagation="none"
+                      id="usersEdit"
+                rendered="#{empty from}"
+                disabled="#{(_usersUserProjectRoles.id.roleId le identity.topRoleId) or (_usersUserProjectRoles.id.roleId == roleIDs.PROGRAMME_EVALUATOR_id and identity.topRoleId == roleIDs.PROJECT_ADMIN_id) or not identity.hasPermission(_usersUserProjectRoles.id.projectId,roleIDs.PROJECT_ADMIN_id,'')}">
+                <f:param name="usersId" value="#{_usersUserProjectRoles.id.id}"/>
+                <f:param name="usersFrom" value="UsersUserProjectRolesList"/>
+            </s:link>
+        </rich:column>
+    </rich:dataTable>
+
+    </div>
+    </rich:panel>
+
+    <div class="tableControl">
+
+        <s:link view="/UsersUserProjectRolesList.xhtml"
+            rendered="#{usersUserProjectRolesList.previousExists}"
+               value="#{messages.left}#{messages.left} First Page"
+                  id="firstPage">
+          <f:param name="firstResult" value="0"/>
+        </s:link>
+
+        <s:link view="/UsersUserProjectRolesList.xhtml"
+            rendered="#{usersUserProjectRolesList.previousExists}"
+               value="#{messages.left} Previous Page"
+                  id="previousPage">
+            <f:param name="firstResult"
+                    value="#{usersUserProjectRolesList.previousFirstResult}"/>
+        </s:link>
+
+        <s:link view="/UsersUserProjectRolesList.xhtml"
+            rendered="#{usersUserProjectRolesList.nextExists}"
+               value="Next Page #{messages.right}"
+                  id="nextPage">
+            <f:param name="firstResult"
+                    value="#{usersUserProjectRolesList.nextFirstResult}"/>
+        </s:link>
+
+        <s:link view="/UsersUserProjectRolesList.xhtml"
+            rendered="#{usersUserProjectRolesList.nextExists}"
+               value="Last Page #{messages.right}#{messages.right}"
+                  id="lastPage">
+            <f:param name="firstResult"
+                    value="#{usersUserProjectRolesList.lastFirstResult}"/>
+        </s:link>
+
+    </div>
+
+    <s:div styleClass="actionButtons" rendered="#{empty from and identity.hasRole(roleIDs.SUPER_ADMIN_id)}">
+        <s:button view="/UsersUserProjectRolesEdit.xhtml"
+                    id="create"
+           propagation="none"
+                 value="Create usersUserProjectRoles">
+            <f:param name="usersUserProjectRolesId"/>
+            <f:param name="usersUserProjectRolesFirstName"/>
+            <f:param name="usersUserProjectRolesLastName"/>
+            <f:param name="usersUserProjectRolesRegistrationDate"/>
+            <f:param name="usersUserProjectRolesActive"/>
+            <f:param name="usersUserProjectRolesLoginName"/>
+            <f:param name="usersUserProjectRolesPassword"/>
+            <f:param name="usersUserProjectRolesEmail"/>
+            <f:param name="usersUserProjectRolesUserId"/>
+            <f:param name="usersUserProjectRolesProjectId"/>
+            <f:param name="usersUserProjectRolesRoleId"/>
+        </s:button>
+    </s:div>
+
+</ui:define>
+
+</ui:composition>

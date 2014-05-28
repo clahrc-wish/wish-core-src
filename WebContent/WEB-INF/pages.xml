@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2013 Imperial College London
+  
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+    http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<pages xmlns="http://jboss.org/schema/seam/pages"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://jboss.org/schema/seam/pages http://jboss.org/schema/seam/pages-2.3.xsd"
+
+       no-conversation-view-id="/home.xhtml"
+       login-view-id="/login.xhtml">
+
+    <exception class="org.jboss.seam.framework.EntityNotFoundException">
+      <redirect view-id="/error.xhtml">
+        <message severity="warn">Record not found</message>
+      </redirect>
+    </exception>
+         
+    <exception class="org.jboss.seam.web.FileUploadException">
+      <redirect view-id="/error.xhtml">
+        <message severity="warn">Uploaded file size larger than allowed</message>
+      </redirect>
+    </exception>
+    
+    <exception class="javax.persistence.EntityNotFoundException">
+      <redirect view-id="/error.xhtml">
+        <message severity="warn">Record not found</message>
+      </redirect>
+    </exception>
+         
+    <exception class="javax.persistence.EntityExistsException">
+      <redirect view-id="/error.xhtml">
+        <message severity="warn">Duplicate record</message>
+      </redirect>
+    </exception>
+         
+    <exception class="javax.persistence.OptimisticLockException">
+      <end-conversation/>
+      <redirect view-id="/error.xhtml">
+        <message severity="warn">Another user changed the same data, please try again</message>
+      </redirect>
+    </exception>
+         
+    <exception class="org.jboss.seam.security.AuthorizationException">
+      <redirect view-id="/error.xhtml">
+        <message severity="error">You don't have permission to access this resource</message>
+      </redirect>
+    </exception>
+         
+    <exception class="org.jboss.seam.security.NotLoggedInException">
+      <redirect view-id="/login.xhtml">
+        <message severity="warn">#{messages['org.jboss.seam.NotLoggedIn']}</message>
+      </redirect>
+    </exception>
+         
+    <exception class="javax.faces.application.ViewExpiredException">
+      <redirect view-id="/login.xhtml">
+        <message severity="warn">Browser session has timed out, please try again</message>
+      </redirect>
+    </exception>
+         
+    <exception class="org.jboss.seam.ConcurrentRequestTimeoutException" log-level="trace">
+      <http-error error-code="503"/>
+    </exception>
+         
+    <exception>
+      <redirect view-id="/error.xhtml">
+        <message severity="error">Unexpected error, please try again</message>
+      </redirect>
+    </exception>
+         
+</pages>

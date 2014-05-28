@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright 2013 Imperial College London
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.22" id="1">
+    <list-property name="configVars">
+        <structure>
+            <property name="name">__isdisplay__Project_ID_1392_0</property>
+            <property name="value">23</property>
+        </structure>
+        <structure>
+            <property name="name">__isdisplay__CLD Date_223_1</property>
+            <property name="value">CLD Autumn Event 2011 (2011-09-29)</property>
+        </structure>
+        <structure>
+            <property name="name">Project_ID_1392_2</property>
+            <property name="value">23</property>
+        </structure>
+        <structure>
+            <property name="name">Project_ID_1392_type_</property>
+            <property name="value">string</property>
+        </structure>
+        <structure>
+            <property name="name">CLD Date_223_3</property>
+            <property name="value">2011-09-29</property>
+        </structure>
+        <structure>
+            <property name="name">CLD Date_223_type_</property>
+            <property name="value">date</property>
+        </structure>
+        <structure>
+            <property name="name">CLD Date_223_expr_</property>
+            <property name="value">dataSetRow["Milestone_Date"]</property>
+        </structure>
+    </list-property>
+</report>

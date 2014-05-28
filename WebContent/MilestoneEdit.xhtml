@@ -1,0 +1,152 @@
+<!--
+Copyright 2013 Imperial College London
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.org/schema/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="milestone" styleClass="edit">
+
+        <rich:panel>
+            <f:facet name="header">#{milestoneHome.managed ? 'Edit' : 'Add'} Milestone</f:facet>
+
+            <s:decorate id="milestoneDateField" template="layout/edit.xhtml">
+                <ui:define name="label">Milestone date</ui:define>
+                <rich:calendar id="milestoneDate"
+                         required="true" enableManualInput="true"
+                            value="#{milestoneHome.instance.milestoneDate}" datePattern="dd/MM/yy" />
+            </s:decorate>
+
+
+            <s:decorate id="labelField" template="layout/edit.xhtml">
+                <ui:define name="label">Label</ui:define>
+                <h:inputText id="label"
+                           size="45"
+                      maxlength="45"
+                          value="#{milestoneHome.instance.label}">
+                    <a:ajax event="blur" render="labelField" bypassUpdates="true" oncomplete="onAjaxRequestComplete()"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="descriptionField" template="layout/edit.xhtml">
+                <ui:define name="label">Description</ui:define>
+                <h:inputText id="description"
+                           size="45"
+                      maxlength="45"
+                          value="#{milestoneHome.instance.description}">
+                    <a:ajax event="blur" render="descriptionField" bypassUpdates="true" oncomplete="onAjaxRequestComplete()"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="milestoneTypeField" template="layout/edit.xhtml">
+                <ui:define name="label">Milestone type</ui:define>
+                <h:inputText id="milestoneType"
+                       required="true"
+                           size="45"
+                      maxlength="45"
+                          value="#{milestoneHome.instance.milestoneType}">
+                    <a:ajax event="blur" render="milestoneTypeField" bypassUpdates="true" oncomplete="onAjaxRequestComplete()"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="rcTimestampField" template="layout/edit.xhtml" rendered="#{identity.hasRole(roleIDs.SUPER_ADMIN_id)}">
+                <ui:define name="label">Date Entry Made</ui:define>
+                <rich:calendar id="rcTimestamp" value="#{milestoneHome.instance.rcTimestamp}"
+                			   datePattern="dd/MM/yy hh:mm a"/>
+            </s:decorate>
+
+            <div style="clear:both">
+                <span class="required">*</span>
+                required fields
+            </div>
+
+        </rich:panel>
+
+        <div class="actionButtons">
+
+            <h:commandButton id="save"
+                          value="Save"
+                         action="#{milestoneHome.persist}"
+                       disabled="#{!milestoneHome.wired}"
+                       rendered="#{!milestoneHome.managed}">
+                <s:conversationId/>
+            </h:commandButton>
+
+            <h:commandButton id="update"
+                          value="Update"
+                         action="#{milestoneHome.update}"
+                       rendered="#{milestoneHome.managed}">
+                <s:conversationId/>
+            </h:commandButton>
+
+            <a:commandButton id="delete"
+                          value="Delete"
+                     oncomplete="#{rich:component('confirmDeletePanel')}.show();"
+                      immediate="true"
+                       rendered="#{milestoneHome.managed}"/>
+
+            <s:button id="cancelEdit"
+                   value="Cancel"
+             propagation="end"
+                    view="/Milestone.xhtml"
+                rendered="#{milestoneHome.managed}"
+                  action="#{bijectionUtility.clearInstances()}"/>
+
+            <s:button id="cancelAdd"
+                   value="Cancel"
+             propagation="end"
+                    view="/#{empty milestoneFrom ? 'MilestoneList' : milestoneFrom}.xhtml"
+                rendered="#{!milestoneHome.managed}"
+                  action="#{bijectionUtility.clearInstances('milestoneHome')}"/>
+
+        </div>
+        <rich:popupPanel modal="true" id="confirmDeletePanel" moveable="false" resizeable="false" height="135">
+		  <f:facet name="header">Confirm Record Deletion</f:facet> 
+		  <div class="actionButtons">
+		    <rich:panel style="align:center;">
+			  <h:outputText value="Are you sure you want to delete this ?" />
+			  <table width="100%">
+			    <tbody>
+				  <tr>
+				    <td align="center" width="50%">
+					  <a:commandButton type="submit" value="Yes" action="#{milestoneHome.remove}"
+					    oncomplete="#{rich:component('confirmDeletePanel')}.hide()"/>
+					</td>
+					<td align="center" width="50%">
+					  <a:commandButton type="submit" value="No" onclick="#{rich:component('confirmDeletePanel')}.hide()"/>
+					</td>
+				  </tr>
+			    </tbody>
+			  </table>
+		    </rich:panel>
+    	  </div> 
+		</rich:popupPanel>
+    </h:form>
+
+</ui:define>
+
+</ui:composition>

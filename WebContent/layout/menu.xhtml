@@ -1,0 +1,155 @@
+<!--
+Copyright 2013 Imperial College London
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<rich:toolbar xmlns:rich="http://richfaces.org/rich" xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:s="http://jboss.org/schema/seam/taglib">  
+  <rich:toolbarGroup> 
+    <s:link id="menuHomeId" view="/home.xhtml" value="Welcome Page" propagation="end" action="#{bijectionUtility.clearInstances('activeProjectHome')}"></s:link>  
+    <s:link id="menuProjectHomeId" view="/projectHome.xhtml" value="Project Home" action="#{bijectionUtility.clearInstances()}" rendered="#{not empty activeProjectHome.definedInstance}"></s:link> 
+  </rich:toolbarGroup>  
+  <rich:dropDownMenu id="projectDataMenuId" showDelay="250" hideDelay="0" submitMode="none" rendered="#{identity.hasRole(roleIDs.PROJECT_STAFF_id)}"> 
+    <f:facet name="label">Project Data</f:facet>  
+    <rich:menuItem rendered="#{not empty activeProjectHome.definedInstance and not suspendedModules.isSuspended( 'pdsa' )}" disabled="#{not identity.hasRole(roleIDs.PROJECT_STAFF_id)}"> 
+      <s:link view="/PdsaList.xhtml" value="PDSA cycles" id="PdsaId" includePageParams="false" propagation="none"></s:link> 
+    </rich:menuItem>  
+    <rich:menuItem rendered="#{not empty activeProjectHome.definedInstance and not suspendedModules.isSuspended( 'sustainability' )}" disabled="#{not identity.hasRole(roleIDs.PROJECT_STAFF_id)}"> 
+      <s:link view="/SustainabilityList.xhtml" value="Sustainability Model scores" id="SustainabilityId" includePageParams="false" propagation="none"></s:link> 
+    </rich:menuItem>  
+    <rich:menuItem rendered="#{not empty activeProjectHome.definedInstance and not suspendedModules.isSuspended( 'ppi' )}" disabled="#{not identity.hasRole(roleIDs.PROJECT_STAFF_id)}"> 
+      <s:link view="/PpiList.xhtml" value="PPI scores" id="PpiId" includePageParams="false" propagation="none"></s:link> 
+    </rich:menuItem>  
+    <rich:menuItem rendered="#{not empty activeProjectHome.definedInstance}" disabled="#{not identity.hasRole(roleIDs.PROJECT_STAFF_id)}"> 
+      <s:link view="/CommentList.xhtml" value="Comments" id="CommentId" includePageParams="false" propagation="none"></s:link> 
+    </rich:menuItem>  
+  </rich:dropDownMenu>  
+  <rich:dropDownMenu showDelay="250" hideDelay="0" submitMode="none"> 
+    <f:facet name="label">Reports</f:facet>  
+    <rich:menuGroup label="Admin Reports" direction="autoRight" rendered="#{identity.hasRole(roleIDs.PROJECT_ADMIN_id) or (identity.topRoleId == roleIDs.PROGRAMME_EVALUATOR_id)}"> 
+      <rich:menuItem rendered="#{not empty activeProjectHome.definedInstance}"> 
+        <h:outputLink target="_blank" value="#{birtFramesetPath}" disabled="#{not identity.hasRole(roleIDs.PROJECT_ADMIN_id) and not (identity.topRoleId == roleIDs.PROGRAMME_EVALUATOR_id)}" id="ImprovementDataEntryReportId"> 
+          <f:param name="__report" value="TeamDataEntry_Improvement.rptdesign"></f:param>  
+          <f:param name="Project_ID" value="#{activeProjectHome.definedInstance.id}"></f:param>  
+          <h:outputText styleClass="dropDownGroupStyle" value="Improvement data entry report"></h:outputText> 
+        </h:outputLink> 
+      </rich:menuItem>  
+      <rich:menuItem rendered="#{not empty activeProjectHome.definedInstance and not suspendedModules.isSuspended( 'sustainability' )}"> 
+        <h:outputLink target="_blank" value="#{birtFramesetPath}" disabled="#{not identity.hasRole(roleIDs.PROJECT_ADMIN_id) and not (identity.topRoleId == roleIDs.PROGRAMME_EVALUATOR_id)}" id="SustainabilityDataEntryReportId"> 
+          <f:param name="__report" value="TeamDataEntry_Sustainability.rptdesign"></f:param>  
+          <f:param name="Project_ID" value="#{activeProjectHome.definedInstance.id}"></f:param>  
+          <h:outputText styleClass="dropDownGroupStyle" value="Sustainability data entry report"></h:outputText> 
+        </h:outputLink> 
+      </rich:menuItem>  
+      <rich:menuItem rendered="#{not empty activeProjectHome.definedInstance and not suspendedModules.isSuspended( 'pdsa' )}"> 
+        <h:outputLink target="_blank" value="#{birtFramesetPath}" disabled="#{not identity.hasRole(roleIDs.PROJECT_ADMIN_id) and not (identity.topRoleId == roleIDs.PROGRAMME_EVALUATOR_id)}" id="PDSADataEntryReportId"> 
+          <f:param name="__report" value="TeamDataEntry_PDSA.rptdesign"></f:param>  
+          <f:param name="Project_ID" value="#{activeProjectHome.definedInstance.id}"></f:param>  
+          <h:outputText styleClass="dropDownGroupStyle" value="PDSA data entry report"></h:outputText> 
+        </h:outputLink> 
+      </rich:menuItem>  
+      <rich:menuItem rendered="#{not empty activeProjectHome.definedInstance and not suspendedModules.isSuspended( 'ppi' )}"> 
+        <h:outputLink target="_blank" value="#{birtFramesetPath}" disabled="#{not identity.hasRole(roleIDs.PROJECT_ADMIN_id) and not (identity.topRoleId == roleIDs.PROGRAMME_EVALUATOR_id)}" id="PPIDataEntryReportId"> 
+          <f:param name="__report" value="TeamDataEntry_PPI.rptdesign"></f:param>  
+          <f:param name="Project_ID" value="#{activeProjectHome.definedInstance.id}"></f:param>  
+          <h:outputText styleClass="dropDownGroupStyle" value="PPI data entry report"></h:outputText> 
+        </h:outputLink> 
+      </rich:menuItem>  
+      <rich:menuItem rendered="#{not empty activeProjectHome.definedInstance}"> 
+        <h:outputLink target="_blank" value="#{birtFramesetPath}" disabled="#{not identity.hasRole(roleIDs.PROJECT_ADMIN_id) and not (identity.topRoleId == roleIDs.PROGRAMME_EVALUATOR_id)}" id="CommentsDataEntryReportId"> 
+          <f:param name="__report" value="TeamDataEntry_Comment.rptdesign"></f:param>  
+          <f:param name="Project_ID" value="#{activeProjectHome.definedInstance.id}"></f:param>  
+          <h:outputText styleClass="dropDownGroupStyle" value="Comments data entry report"></h:outputText> 
+        </h:outputLink> 
+      </rich:menuItem> 
+    </rich:menuGroup>  
+    <rich:menuGroup label="Data Reports" direction="autoRight" rendered="#{identity.hasRole(roleIDs.PROJECT_VIEWER_id)}" id="projectDataReportsMenuId"> 
+      <rich:menuItem rendered="#{not empty activeProjectHome.definedInstance and not suspendedModules.isSuspended( 'sustainability' )}"> 
+        <h:outputLink target="_blank" value="#{birtFramesetPath}" disabled="#{not identity.hasRole(roleIDs.PROJECT_VIEWER_id)}" id="SustainabilityAverageReportId"> 
+          <f:param name="__report" value="SustainabilityRangeProject.rptdesign"></f:param>  
+          <f:param name="Project" value="#{activeProjectHome.definedInstance.id}"></f:param>  
+          <h:outputText styleClass="dropDownGroupStyle" value="Sustainability score average"></h:outputText> 
+        </h:outputLink> 
+      </rich:menuItem>  
+      <rich:menuItem rendered="#{not empty activeProjectHome.definedInstance and not suspendedModules.isSuspended( 'sustainability' )}"> 
+        <h:outputLink target="_blank" value="#{birtFramesetPath}" disabled="#{not identity.hasRole(roleIDs.PROJECT_VIEWER_id)}" id="SustainabilityOverTimeReportId"> 
+          <f:param name="__report" value="SustainabilityOverTime.rptdesign"></f:param>  
+          <f:param name="Project" value="#{activeProjectHome.definedInstance.id}"></f:param>  
+          <h:outputText styleClass="dropDownGroupStyle" value="Sustainability score over time"></h:outputText> 
+        </h:outputLink> 
+      </rich:menuItem>  
+      <rich:menuItem rendered="#{not empty activeProjectHome.definedInstance and not suspendedModules.isSuspended( 'pdsa' )}"> 
+        <h:outputLink target="_blank" value="#{birtFramesetPath}" disabled="#{not identity.hasRole(roleIDs.PROJECT_VIEWER_id)}" id="PDSAReportId"> 
+          <f:param name="__report" value="PDSA_report.rptdesign"></f:param>  
+          <f:param name="Project_Name" value="#{activeProjectHome.definedInstance.name}"></f:param>  
+          <h:outputText styleClass="dropDownGroupStyle" value="PDSA report"></h:outputText> 
+        </h:outputLink> 
+      </rich:menuItem>  
+      <rich:menuItem rendered="#{not empty activeProjectHome.definedInstance and not suspendedModules.isSuspended( 'ppi' )}"> 
+        <h:outputLink target="_blank" value="#{birtFramesetPath}" disabled="#{not identity.hasRole(roleIDs.PROJECT_VIEWER_id)}" id="PPIReportId"> 
+          <f:param name="__report" value="PPI_Report.rptdesign"></f:param>  
+          <f:param name="Project_Name" value="#{activeProjectHome.definedInstance.name}"></f:param>  
+          <h:outputText styleClass="dropDownGroupStyle" value="PPI report"></h:outputText> 
+        </h:outputLink> 
+      </rich:menuItem>  
+      <rich:menuItem rendered="#{not empty activeProjectHome.definedInstance}"> 
+        <h:outputLink target="_blank" value="#{birtFramesetPath}" disabled="#{not identity.hasRole(roleIDs.PROJECT_VIEWER_id)}" id="CommentsReportId"> 
+          <f:param name="__report" value="Comments_report.rptdesign"></f:param>  
+          <f:param name="Project_Name" value="#{activeProjectHome.definedInstance.name}"></f:param>  
+          <h:outputText styleClass="dropDownGroupStyle" value="Comments report"></h:outputText> 
+        </h:outputLink> 
+      </rich:menuItem>
+      <rich:menuItem rendered="#{(not empty activeProjectHome.definedInstance) and (activeProjectHome.definedInstance.name == projectIDs.COPD_EXAMPLE_str)}"> 
+        <h:outputLink target="_blank" value="#{birtFramesetPath}" disabled="#{not identity.hasPermission(projectIDs.COPD_EXAMPLE_id,roleIDs.PROJECT_VIEWER_id,'')}" id="COPD_ExampleReportId"> 
+          <f:param name="__report" value="copd_example_improvement.rptdesign"></f:param>  
+          <h:outputText styleClass="dropDownGroupStyle" value="Improvement data report"></h:outputText> 
+        </h:outputLink> 
+      </rich:menuItem>  
+    </rich:menuGroup> 
+  </rich:dropDownMenu>  
+  <rich:dropDownMenu showDelay="250" hideDelay="0" submitMode="none"> 
+    <f:facet name="label">Resources</f:facet>  
+    <rich:menuItem disabled="#{not identity.hasRole(roleIDs.PROJECT_VIEWER_id)}"> 
+      <h:outputLink target="_blank" value="#{contextPath}/doc/WISH_User_guide.pdf" id="UserGuideId"> 
+        <h:outputText styleClass="dropDownGroupStyle" value="WISH User Guide"></h:outputText> 
+      </h:outputLink> 
+    </rich:menuItem>  
+    <rich:menuItem rendered="#{not suspendedModules.isSuspended( 'sustainability' )}" disabled="#{not identity.hasRole(roleIDs.PROJECT_VIEWER_id)}"> 
+      <h:outputLink target="_blank" value="#{contextPath}/doc/How_to.pdf" id="HowToGuideId"> 
+        <h:outputText styleClass="dropDownGroupStyle" value="How to Use Sustainability Model"></h:outputText> 
+      </h:outputLink> 
+    </rich:menuItem>  
+    <rich:menuItem rendered="#{not suspendedModules.isSuspended( 'sustainability' )}" disabled="#{not identity.hasRole(roleIDs.PROJECT_VIEWER_id)}"> 
+      <h:outputLink target="_blank" value="#{contextPath}/doc/Sustainability_Model.pdf" id="SustainabilityModelAndGuideId"> 
+        <h:outputText styleClass="dropDownGroupStyle" value="Sustainability Model and Guide"></h:outputText> 
+      </h:outputLink> 
+    </rich:menuItem>  
+    <rich:menuItem rendered="#{not suspendedModules.isSuspended( 'sustainability' )}" disabled="#{not identity.hasRole(roleIDs.PROJECT_VIEWER_id)}"> 
+      <h:outputLink target="_blank" value="#{contextPath}/doc/Sustainability_Guide.pdf" id="SustainabilityGuideId"> 
+        <h:outputText styleClass="dropDownGroupStyle" value="Sustainability Guide"></h:outputText> 
+      </h:outputLink> 
+    </rich:menuItem>  
+    <rich:menuItem disabled="#{not identity.hasRole(roleIDs.PROJECT_VIEWER_id)}" rendered="#{(facesContext.viewRoot.viewId != '/ProblemReport.xhtml') and not suspendedModules.isSuspended( 'bugzilla' )}"> 
+      <s:link view="/ProblemReport.xhtml" value="Report a problem" id="ReportProblemId" includePageParams="false" propagation="none"> 
+        <f:param name="from" value="projectHome"></f:param> 
+      </s:link> 
+    </rich:menuItem> 
+  </rich:dropDownMenu>  
+  <!-- @newMenuItem@ -->  
+  <rich:toolbarGroup location="right"> 
+    <h:outputLabel value="Session expires in: " rendered="#{identity.loggedIn}"> 
+      <h:outputText id="timeElapseDisplay" value="00:00"></h:outputText> 
+    </h:outputLabel>  
+    <h:outputText id="menuWelcomeId" value="Signed in as: #{credentials.username}" rendered="#{identity.loggedIn}"></h:outputText>  
+    <s:link id="menuLogoutId" view="/home.xhtml" action="#{identity.logout}" value="Logout" rendered="#{identity.loggedIn}" propagation="none"></s:link> 
+  </rich:toolbarGroup> 
+</rich:toolbar>

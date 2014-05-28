@@ -1,0 +1,91 @@
+/*******************************************************************************
+ * Copyright 2013 Imperial College London
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+ body{
+	font-family:'#{richSkin.generalFamilyFont}';
+	color:'#{richSkin.generalTextColor}';
+}
+h1{
+	font-family:'#{richSkin.generalFamilyFont}';
+	color:'#{richSkin.tabDisabledTextColor}';
+}
+a:active, a:link, a:visited{
+	color:'#{richSkin.generalLinkColor}';
+}
+a:hover{
+	color:'#{richSkin.hoverLinkColor}';
+}
+input[type=text], input[type=password], textarea, select{
+	background-color:'#{richSkin.controlBackgroundColor}';
+	color:'#{richSkin.controlTextColor}';
+	background-position:left top;
+	background-repeat:repeat-x;
+	border:1px solid;
+	border-color:'#{richSkin.tableBorderColor}';
+}
+select{
+	background-color:transparent;
+}
+option{
+	background-color:'#{richSkin.generalBackgroundColor}';
+}
+select[multiple]{
+	background-color:'#{richSkin.controlBackgroundColor}';
+}
+select[multiple] option{
+	background-color:transparent;
+}
+input[type=submit], input[type=button]{
+	padding:1px 4px;
+	border:1px solid;
+	border-color:'#{richSkin.headerBackgroundColor}';
+	color:'#{richSkin.headerTextColor}';
+	font-weight:bold;
+}
+input[type=submit][disabled], input[type=button][disabled]{
+	opacity:0.33;
+}
+* html input[type=submit], * html input[type=button], *+html input[type=submit], *+html input[type=button]{
+	border:0;
+	font-size:11px;
+}
+.rf-tbl-subheadercell{
+}
+.rf-tb a:link, .rf-tb a:visited, .rf-tb a:active, .rf-tb a:hover{
+	color:'#{richSkin.headerTextColor}';
+}
+.rf-tb a:hover{
+	color:'#{richSkin.generalTextColor}';
+}
+.rf-tb .rf-ddm-itm, .rf-tb .rf-ddm-itm a, .rf-tb .rf-ddm-itm a:hover, .rf-tb .rf-ddm-itm a:visited{
+	color:'#{richSkin.generalTextColor}';
+}
+.rf-tbl-subheadercell a:hover{
+	color:'#{richSkin.calendarHolidaysTextColor}';
+}
+/*input[type=text][class*=rich-combobox-button-icon]{*/
+input[type=text][class~=rich-combobox-button-icon]{
+	background-color:transparent;
+}
+input[type=text][class~=rich-combobox-button-icon-disabled]{
+	background-color:transparent;
+}
+/*input[type=text][class*=rich-combobox-button-background]{*/
+input[type=text][class~=rich-combobox-button-background]{
+	background-color:'#{richSkin.tabBackgroundColor}';
+}
+input[type=text][class~=rich-combobox-button-pressed-background]{
+	background-color:'#{richSkin.tabBackgroundColor}';
+}

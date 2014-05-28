@@ -1,0 +1,84 @@
+<!--
+Copyright 2013 Imperial College London
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.org/schema/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    template="layout/error_template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="bugzillaProxyForm" enctype="multipart/form-data">
+
+        <rich:panel>
+            <f:facet name="header">Problem Report</f:facet>
+			
+			<s:validateAll>
+				<s:decorate id="problemAreaField" template="layout/edit.xhtml">
+            		<ui:define name="label">What were you doing when the problem occurred</ui:define>
+            		<h:selectOneMenu id="comp" required="true" value="#{bugzillaProxy.toolComponent}">
+            			<f:selectItems value="#{bugzillaProxy.components}" itemLabelEscaped="Click to select..."/>
+           				<a:ajax event="change" render="problemAreaField" bypassUpdates="true" oncomplete="onAjaxRequestComplete()"/>
+            		</h:selectOneMenu>
+        		</s:decorate>
+	            <s:decorate id="summaryField" template="layout/edit.xhtml">
+	                <ui:define name="label">Short summary of the problem</ui:define>
+	                <h:inputText id="summary" required="true" value="#{bugzillaProxy.summary}" size="100" maxlength="100">
+                    	<a:ajax event="blur" render="summaryField" bypassUpdates="true" oncomplete="onAjaxRequestComplete()"/>
+	                </h:inputText>
+	            </s:decorate>
+	
+				<s:decorate id="descriptionField" template="layout/edit.xhtml">
+	                <ui:define name="label">Detailed description of the problem</ui:define>
+	                <h:inputTextarea id="description" required="true" value="#{bugzillaProxy.description}"
+	                                 rows="20" cols="102">
+                    	<a:ajax event="blur" render="descriptionField" bypassUpdates="true" oncomplete="onAjaxRequestComplete()"/>
+                    	<f:validateLength maximum="1000"/>
+	                </h:inputTextarea>
+	            </s:decorate>
+	            
+	            <s:decorate id="imageAttachmentField" template="layout/edit.xhtml">
+	            	<ui:define name="label">Attach a print-screen file (<b>image file type: png, gif, jpeg/jpg</b>)</ui:define>
+	            	<s:fileUpload id="imageAttachment" style="width: 563px;"
+	            	          accept="image/png,image/gif,image/jpeg"
+	            	            data="#{bugzillaProxy.imageAttachment}"
+	            	     contentType="#{bugzillaProxy.imageAttachmentContentType}"/>
+	            </s:decorate>
+	            
+	            <div style="clear:both">
+	                <span class="required">*</span> 
+	                required fields
+	            </div>
+			</s:validateAll>
+        </rich:panel>
+
+        <div class="actionButtons">
+            <h:commandButton id="submitBug" value="Submit Bug" action="#{bugzillaProxy.submitBug}"/>
+                   
+            <s:button id="cancelBug" value="Cancel" propagation="end"
+                      view="/#{empty from ? 'home' : from}.xhtml"/>
+        </div>
+
+    </h:form>
+
+</ui:define>
+
+</ui:composition>
